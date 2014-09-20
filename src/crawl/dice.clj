@@ -3,7 +3,7 @@
 (def default-sides 20)
 
 (defn roll-die 
-  "Roll a single dice and get a number between 1 and the number of
+  "Roll a single die and get a number between 1 and the number of
   sides passed.  "
   ([] (roll-die default-sides))
   ([sides] (inc (rand-int sides))))
