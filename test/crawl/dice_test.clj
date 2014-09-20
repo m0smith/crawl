@@ -14,24 +14,28 @@
                 (let [r v]
                   (and (> r 0) (< r 21)))))
 
-(defn sides-and-roll [lower upper]
-  (let [rtnval (gen/bind (gen/choose lower upper)
-                         (fn [v] (gen/tuple (gen/return v) (gen/return (roll-die v)))))]
-    rtnval))
+(defn roll-default-die-gen [sides dice] (roll-die))
 
-(defn arg-prop [lower upper]
-  (prop/for-all [vr (gen/not-empty  (gen/vector (sides-and-roll lower upper)))]
+(defn roll-die-gen [sides dice] (roll-die sides))
+
+(defn sides-and-roll [sides-lower sides-upper dice-upper roll-fn]
+  (gen/fmap (fn [[sides dice]] [sides dice (roll-fn sides dice)])
+            (gen/tuple (gen/choose sides-lower sides-upper) (gen/choose 1 dice-upper))))
+
+
+(defn arg-prop [sides-lower sides-upper dice-upper roll-fn]
+  (prop/for-all [sdv (gen/not-empty  (gen/vector (sides-and-roll sides-lower sides-upper dice-upper roll-fn)))]
                 (every? identity 
-                        (for [[v r] vr]
-                          (and (> r 0) (<= r v))))))
+                        (for [[sides dice value] sdv]
+                          (and (> value 0) (<= value sides))))))
 
 (deftest roll-die-noarg []
-  (testing "The default dice roll is between 1 and 20"
-    (tc/quick-check 100 noarg-prop)))
+  (testing "The default die roll is between 1 and 20"
+    (tc/quick-check 100 (arg-prop 20 20 1 roll-default-die-gen))))
 
 (deftest roll-die-arg []
-  (testing "Check that a dice roll is between 1 and the number"
-    (tc/quick-check 100 (arg-prop 2 100))))
+  (testing "Check that a die roll is between 1 and the number of sides"
+    (tc/quick-check 100 (arg-prop 2 100 1 roll-die-gen))))
 
 
 ;;  
