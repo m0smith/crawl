@@ -36,11 +36,37 @@
             (gen/tuple (gen/choose sides-lower sides-upper) (gen/choose 1 dice-upper))))
 
 
+
+
 (defn arg-prop [sides-lower sides-upper dice-upper roll-fn pred]
   (prop/for-all [sdv (gen/not-empty  (gen/vector (sides-and-roll sides-lower sides-upper dice-upper roll-fn)))]
                 (every? identity 
                         (for [[sides dice value] sdv]
                           (pred sides dice value)))))
+
+;; ## dice/throw-dice
+;;
+
+(defn throw-dice-gen 
+  "Generator for inputs to throw-dice"
+  []
+  (gen/tuple gen/s-pos-int gen/s-pos-int gen/int))
+
+
+(defn throw-dice?
+  "Validate the `throw-dice` function for the arguments. 
+
+  The value must be between `modifier + dice` and `modifier + (dice * sides)`
+
+"
+  [dice sides modifier]
+  (let [r (throw-dice dice sides modifier)
+        min (+ modifier dice)
+        max (+ modifier (* sides dice))]
+    (<= min r max)))
+
+
+;; ## Start the tests
 
 (deftest roll-die-noarg []
   (testing "The default die roll is between 1 and 20"
@@ -58,5 +84,9 @@
   (testing "Check that dice rolls are between 1 and the number of sides"
     (tc/quick-check 100 (arg-prop 2 100 100 roll-dice-gen roll-dice?))))
 
+(deftest throw-dice-3arg []
+  (testing "Check `throw-dice` returns a valid value"
+    (tc/quick-check 100 (prop/for-all [s (throw-dice-gen)] (apply throw-dice? s)))))
 
-;;  
+
+

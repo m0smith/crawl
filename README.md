@@ -1,14 +1,14 @@
 # crawl
 
-A Clojure library designed to ... well, that part is up to you.
+A dungeon crawler
 
 ## Usage
 
-FIXME
+Battle things and get rich.
 
 ## License
 
-Copyright © 2014 FIXME
+Copyright © 2014 Matthew O. Smith
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
