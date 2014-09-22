@@ -11,7 +11,8 @@
 
 
 (defn prototype-catalog 
-  "Create the catalog of monster prototypes."
+  "Create and return the catalog of monster prototypes.  The catalog is a map of
+`pid -> MonsterPrototype`."
   []
   (let [vals (->> "monsters.edn"
                   io/resource
@@ -25,7 +26,7 @@
   "Create an instance of a monster from a given MonstorPrototype"
   [{:keys [pid type ac max-hp attack-dice damage-dice loot] :as prototype}]
    (let [hp (throw-dice max-hp)]
-     (->Monster (gensym type)
+     (->Monster (keyword (gensym (str type "-")))
                 pid
                 type
                 (throw-dice ac)
