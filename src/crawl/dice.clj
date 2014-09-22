@@ -33,6 +33,14 @@
   ([dice sides modifier]
      (apply + modifier (roll-dice dice sides))))
 
+(defn throw-attack-dice 
+  ""
+  [m]
+  (let [r (roll-die)]
+    (if (= r default-sides)
+      :critical-hit
+      (+ r m))))
+
 ;; ## throw spec handling
 
 		
@@ -72,5 +80,10 @@
   ([s] (apply + (for [thrw (parse-throw-spec s)]
                   (apply throw-dice thrw)))))
 
-    
+;; ## Other random related functions
+
+(defn roll-choose
+  "Take a vector and return a random element"
+  ([v] (rand-nth v)))
+
   
