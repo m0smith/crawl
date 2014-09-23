@@ -87,3 +87,28 @@
   ([v] (rand-nth v)))
 
   
+(defn roll-chance [top total]
+  (let [r (roll-die total)]
+    (if ( <= r top)
+      r
+      nil)))
+
+(defn roll-for-monster 
+  "roll to see if a new monster is created using a 1 in 5 chance.
+  
+  On nil, do not create a monster.  On non-nil, create a monster"
+  []
+  (roll-chance 1 5))
+
+
+(defn roll-initiative 
+  "to roll initiative, roll 2 d20, one for each combatant.  return 0 for first combatant,
+  1 for the second.  In case of tie, return 0 for even, 1 for odd"
+  []
+  (let [r1 (roll-die)
+        r2 (roll-die)]
+    [ r1 r2
+    (cond
+     (> r1 r2) 0
+     (< r1 r2) 1
+     (= r1 r2) (mod r1 2))]))
