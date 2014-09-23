@@ -2924,7 +2924,13 @@ throw spec is a string like <code>"1d5+3"</code> or <code>"1d5-3"</code> or <cod
   ([[dice sides modifier]]
      (apply + modifier (roll-dice dice sides)))
   ([dice sides modifier]
-     (apply + modifier (roll-dice dice sides))))</pre></td></tr><tr><td class="docs"><h2>throw spec handling</h2>
+     (apply + modifier (roll-dice dice sides))))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn throw-attack-dice 
+  [m]
+  (let [r (roll-die)]
+    (if (= r default-sides)
+      :critical-hit
+      (+ r m))))</pre></td></tr><tr><td class="docs"><h2>throw spec handling</h2>
 </td><td class="codes"></td></tr><tr><td class="docs"><p>Accept strings in the format 1d12+8 and return a seq of dice def:</p>
 
 <pre><code> `[dice side modifier]`
@@ -2951,7 +2957,29 @@ throw spec is a string like <code>"1d5+3"</code> or <code>"1d5-3"</code> or <cod
   negative.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn parse-and-throw-dice
   ([s] (apply + (for [thrw (parse-throw-spec s)]
-                  (apply throw-dice thrw)))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.monster" name="crawl.monster"><h1 class="project-name">crawl.monster</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+                  (apply throw-dice thrw)))))</pre></td></tr><tr><td class="docs"><h2>Other random related functions</h2>
+</td><td class="codes"></td></tr><tr><td class="docs"><p>Take a vector and return a random element</p>
+</td><td class="codes"><pre class="brush: clojure">(defn roll-choose
+  ([v] (rand-nth v)))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn roll-chance [top total]
+  (let [r (roll-die total)]
+    (if ( &lt;= r top)
+      r
+      nil)))</pre></td></tr><tr><td class="docs"><p>roll to see if a new monster is created using a 1 in 5 chance.</p>
+
+<p>  On nil, do not create a monster.  On non-nil, create a monster</p>
+</td><td class="codes"><pre class="brush: clojure">(defn roll-for-monster 
+  []
+  (roll-chance 1 5))</pre></td></tr><tr><td class="docs"><p>to roll initiative, roll 2 d20, one for each combatant.  return 0 for first combatant,
+  1 for the second.  In case of tie, return 0 for even, 1 for odd</p>
+</td><td class="codes"><pre class="brush: clojure">(defn roll-initiative 
+  []
+  (let [r1 (roll-die)
+        r2 (roll-die)]
+    (cond
+     (&gt; r1 r2) 0
+     (&lt; r1 r2) 1
+     (= r1 r2) (mod r1 2))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.monster" name="crawl.monster"><h1 class="project-name">crawl.monster</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns crawl.monster
   (:require [clojure.java.io :as io]
             [clojure.edn :as edn]

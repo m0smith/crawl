@@ -107,8 +107,7 @@
   []
   (let [r1 (roll-die)
         r2 (roll-die)]
-    [ r1 r2
     (cond
      (> r1 r2) 0
      (< r1 r2) 1
-     (= r1 r2) (mod r1 2))]))
+     (= r1 r2) (mod r1 2))))
