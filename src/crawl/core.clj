@@ -12,7 +12,5 @@
 (defn play-game []
   (let [{:keys [catalog] :as context} (->AppContext (prototype-catalog))
         adventurer (create-monster (:adventurer catalog))
-        a-id (:id adventurer)
-        zoo {a-id adventurer}
-        state (->GameState context true :move nil zoo a-id)]
+        state (default-start-state context adventurer)]
     state))
