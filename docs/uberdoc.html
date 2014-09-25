@@ -15,6 +15,9 @@ A dungeon crawler
 ### test.check
 [test.check](https://github.com/clojure/test.check)
 
+### monads, applicaton context and dependecy injection
+[5 Faces of Dependency Injection in Clojure](http://software-ninja-ninja.blogspot.com/2014/04/5-faces-of-dependency-injection-in.html)
+
 " name="description" /><style type="text/css">/**
  * SyntaxHighlighter
  * http://alexgorbatchev.com/SyntaxHighlighter
@@ -2898,23 +2901,53 @@ net.brehaut.ClojureTools = (function (SH) {
 <h3>test.check</h3>
 
 <p><a href="https://github.com/clojure/test.check">test.check</a></p>
-</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.6.0</td></tr><tr><td class="dep-name">org.clojure/test.check</td><td class="dotted"><hr /></td><td class="dep-version">0.5.9</td></tr><tr><td class="dep-name">marginalia</td><td class="dotted"><hr /></td><td class="dep-version">0.8.0</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#crawl.context">crawl.context</a></li><li><a href="#crawl.core">crawl.core</a></li><li><a href="#crawl.dice">crawl.dice</a></li><li><a href="#crawl.monster">crawl.monster</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.context" name="crawl.context"><h1 class="project-name">crawl.context</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(ns crawl.context)</pre></td></tr><tr><td class="docs"><h2>Application Context and Dependency Injectin</h2>
+
+<h3>monads, applicaton context and dependecy injection</h3>
+
+<p><a href="http://software-ninja-ninja.blogspot.com/2014/04/5-faces-of-dependency-injection-in.html">5 Faces of Dependency Injection in Clojure</a></p>
+</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.6.0</td></tr><tr><td class="dep-name">org.clojure/test.check</td><td class="dotted"><hr /></td><td class="dep-version">0.5.9</td></tr><tr><td class="dep-name">org.clojure/algo.monads</td><td class="dotted"><hr /></td><td class="dep-version">0.1.5</td></tr><tr><td class="dep-name">marginalia</td><td class="dotted"><hr /></td><td class="dep-version">0.8.0</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#crawl.combat">crawl.combat</a></li><li><a href="#crawl.context">crawl.context</a></li><li><a href="#crawl.core">crawl.core</a></li><li><a href="#crawl.dice">crawl.dice</a></li><li><a href="#crawl.monster">crawl.monster</a></li><li><a href="#crawl.state">crawl.state</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.combat" name="crawl.combat"><h1 class="project-name">crawl.combat</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(ns crawl.combat
+  (:require [crawl.dice :refer :all]))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn attack [{:keys [attack-dice damage-dice ] :as attacker} 
+              {:keys [ac hp] :as defender}]
+  (let [a-type (:type attacker)
+        d-type (:type defender)]
+    (if (&gt;= (throw-dice attack-dice) ac)
+      (let [damage (throw-dice damage-dice)
+            new-hp (- hp damage)
+            diff { :hp new-hp }]
+        [attacker (merge defender diff) diff (str a-type &quot; hits &quot; d-type &quot; for &quot; damage) ])
+      [attacker defender {} (str a-type &quot; misses &quot; d-type) ])))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.context" name="crawl.context"><h1 class="project-name">crawl.context</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(ns crawl.context
+  (:use [clojure.algo.monads]))</pre></td></tr><tr><td class="docs"><h2>Application Context and Dependency Injectin</h2>
 
 <ul>
 <li>catalog - map of monster prototypes: [id -> MonsterPrototype]</li>
 </ul>
 </td><td class="codes"></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defrecord AppContext [catalog])</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.core" name="crawl.core"><h1 class="project-name">crawl.core</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defrecord AppContext [catalog])</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn apply-ctx [ ctx factory ]
+  ((factory) ctx))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defmacro with-ctx [ &amp; body ]
+	`(domonad reader-m ~@body))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defmacro with-ctx-keys [ ctx &amp; body ]
+	`(domonad reader-m ~ [{:keys ctx} (ask)]  ~@body))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defmacro defnctx [name &amp; body]
+  `(defn ~name []
+     (with-ctx  ~@body)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.core" name="crawl.core"><h1 class="project-name">crawl.core</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns crawl.core
   (:require [crawl.monster :refer :all]
+            [crawl.state :refer :all]
             [crawl.context  :refer :all]))</pre></td></tr><tr><td class="docs"><p>I don't do a whole lot.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn foo
   [x]
-  (println x &quot;Hello, World!&quot;))</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defn play-game []
-  (let [context (-&gt;AppContext (prototype-catalog))]
-    context))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.dice" name="crawl.dice"><h1 class="project-name">crawl.dice</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+  (println x &quot;Hello, World!&quot;))</pre></td></tr><tr><td class="docs"><p>Create the initial game state.</p>
+</td><td class="codes"><pre class="brush: clojure">(defn play-game 
+  []
+  (let [{:keys [catalog] :as context} (-&gt;AppContext (prototype-catalog))
+        adventurer (create-monster (:adventurer catalog))
+        state (default-start-state context adventurer)]
+    state))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.dice" name="crawl.dice"><h1 class="project-name">crawl.dice</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns crawl.dice)</pre></td></tr><tr><td class="docs"><p>dice def:  is a triple of <code>[dice sides modifier]</code>. <br />
 throw spec is a string like <code>"1d5+3"</code> or <code>"1d5-3"</code> or <code>"2d10"</code></p>
 </td><td class="codes"></td></tr><tr><td class="docs">
@@ -3018,7 +3051,11 @@ throw spec is a string like <code>"1d5+3"</code> or <code>"1d5-3"</code> or <cod
                 hp
                 attack-dice
                 damage-dice
-                (throw-dice loot))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr></table><div class="footer">Generated by <a href="https://github.com/gdeer81/marginalia">Marginalia</a>.&nbsp;&nbsp;Syntax highlighting provided by Alex Gorbatchev's <a href="http://alexgorbatchev.com/SyntaxHighlighter/">SyntaxHighlighter</a><div id="floating-toc"><ul><li class="floating-toc-li" id="floating-toc_crawl.context">crawl.context</li><li class="floating-toc-li" id="floating-toc_crawl.core">crawl.core</li><li class="floating-toc-li" id="floating-toc_crawl.dice">crawl.dice</li><li class="floating-toc-li" id="floating-toc_crawl.monster">crawl.monster</li></ul></div></div><script type="text/javascript">SyntaxHighlighter.defaults['gutter'] = false;
+                (throw-dice loot))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.state" name="crawl.state"><h1 class="project-name">crawl.state</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(ns crawl.state)</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defrecord GameState [context running mode combatants zoo adventurer] )</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn default-start-state [context adventurer]
+  (-&gt;GameState context true :move nil { (:id adventurer) adventurer } (:id adventurer)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr></table><div class="footer">Generated by <a href="https://github.com/gdeer81/marginalia">Marginalia</a>.&nbsp;&nbsp;Syntax highlighting provided by Alex Gorbatchev's <a href="http://alexgorbatchev.com/SyntaxHighlighter/">SyntaxHighlighter</a><div id="floating-toc"><ul><li class="floating-toc-li" id="floating-toc_crawl.combat">crawl.combat</li><li class="floating-toc-li" id="floating-toc_crawl.context">crawl.context</li><li class="floating-toc-li" id="floating-toc_crawl.core">crawl.core</li><li class="floating-toc-li" id="floating-toc_crawl.dice">crawl.dice</li><li class="floating-toc-li" id="floating-toc_crawl.monster">crawl.monster</li><li class="floating-toc-li" id="floating-toc_crawl.state">crawl.state</li></ul></div></div><script type="text/javascript">SyntaxHighlighter.defaults['gutter'] = false;
 SyntaxHighlighter.all();
 
 // hackity hack
