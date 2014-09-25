@@ -9,7 +9,9 @@
   (println x "Hello, World!"))
 
 
-(defn play-game []
+(defn play-game 
+  "Create the initial game state."
+  []
   (let [{:keys [catalog] :as context} (->AppContext (prototype-catalog))
         adventurer (create-monster (:adventurer catalog))
         state (default-start-state context adventurer)]
