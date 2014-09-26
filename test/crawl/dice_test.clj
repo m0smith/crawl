@@ -1,6 +1,7 @@
 (ns crawl.dice-test  
   (:require [clojure.test :refer :all]
             [clojure.test.check :as tc]
+            [clojure.test.check.clojure-test :as ct]
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]
             [crawl.core :refer :all]
@@ -68,25 +69,22 @@
 
 ;; ## Start the tests
 
-(deftest roll-die-noarg []
-  (testing "The default die roll is between 1 and 20"
-    (tc/quick-check 100 (arg-prop 20 20 1 roll-default-die-gen roll-die?))))
+(ct/defspec roll-die-noarg 100 
+  (arg-prop 20 20 1 roll-default-die-gen roll-die?))
 
-(deftest roll-die-arg []
-  (testing "Check that a die roll is between 1 and the number of sides"
-    (tc/quick-check 100 (arg-prop 2 100 1 roll-die-gen roll-die?))))
+(ct/defspec roll-die-arg  100 
+  (arg-prop 2 100 1 roll-die-gen roll-die?))
 
-(deftest roll-dice-noarg []
-  (testing "The default dice rolls are between 1 and 20"
-    (tc/quick-check 100 (arg-prop 20 20 100 roll-default-dice-gen roll-dice?))))
+(ct/defspec roll-dice-noarg  100 
+  (arg-prop 20 20 100 roll-default-dice-gen roll-dice?))
 
-(deftest roll-dice-arg []
-  (testing "Check that dice rolls are between 1 and the number of sides"
-    (tc/quick-check 100 (arg-prop 2 100 100 roll-dice-gen roll-dice?))))
+(ct/defspec roll-dice-arg  100 
+  (arg-prop 2 100 100 roll-dice-gen roll-dice?))
 
-(deftest throw-dice-3arg []
-  (testing "Check `throw-dice` returns a valid value"
-    (tc/quick-check 100 (prop/for-all [s (throw-dice-gen)] (apply throw-dice? s)))))
+
+(ct/defspec throw-dice-3arg 100
+  (prop/for-all [s (throw-dice-gen)] 
+                (apply throw-dice? s)))
 
 
 
