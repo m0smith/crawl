@@ -4,12 +4,6 @@
             [crawl.engine :refer :all]
             [crawl.context  :refer :all]))
 
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
-
-
 (defn play-game 
   "Create the initial game state."
   []
