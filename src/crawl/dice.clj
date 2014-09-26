@@ -111,3 +111,11 @@
      (> r1 r2) 0
      (< r1 r2) 1
      (= r1 r2) (mod r1 2))))
+
+(defn roll-damage 
+  "Damage cannot be less than 0"
+  [damage-dice]
+  (let [rtnval (throw-dice damage-dice)]
+    (if (< rtnval 0)
+      0
+      rtnval)))

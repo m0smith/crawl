@@ -10,6 +10,11 @@
 
   
 
+(def gen-dice-def
+  (gen/tuple gen/nat gen/nat gen/int))
+
+
+
 (def noarg-prop 
   (prop/for-all [v (gen/fmap (fn [x] (roll-die)) gen/int)]
                 (let [r v]
@@ -48,7 +53,7 @@
 ;; ## dice/throw-dice
 ;;
 
-(defn throw-dice-gen 
+(defn throw-dice-gen
   "Generator for inputs to throw-dice"
   []
   (gen/tuple gen/s-pos-int gen/s-pos-int gen/int))
@@ -87,4 +92,8 @@
                 (apply throw-dice? s)))
 
 
+(ct/defspec test-roll-damage 100
+  (prop/for-all [dice-def gen-dice-def]
+                (let [roll (roll-damage dice-def)]
+                  (>= roll 0))))
 

@@ -7,7 +7,7 @@
   (let [a-type (:type attacker)
         d-type (:type defender)]
     (if (>= (throw-dice attack-dice) ac)
-      (let [damage (throw-dice damage-dice)
+      (let [damage (roll-damage damage-dice)
             new-hp (- hp damage)
             diff { :hp new-hp }]
         [:hit attacker (merge defender diff) diff (str a-type " hits " d-type " for " damage) ])

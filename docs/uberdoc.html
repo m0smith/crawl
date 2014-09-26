@@ -2913,7 +2913,7 @@ net.brehaut.ClojureTools = (function (SH) {
   (let [a-type (:type attacker)
         d-type (:type defender)]
     (if (&gt;= (throw-dice attack-dice) ac)
-      (let [damage (throw-dice damage-dice)
+      (let [damage (roll-damage damage-dice)
             new-hp (- hp damage)
             diff { :hp new-hp }]
         [:hit attacker (merge defender diff) diff (str a-type &quot; hits &quot; d-type &quot; for &quot; damage) ])
@@ -3024,7 +3024,13 @@ throw spec is a string like <code>"1d5+3"</code> or <code>"1d5-3"</code> or <cod
     (cond
      (&gt; r1 r2) 0
      (&lt; r1 r2) 1
-     (= r1 r2) (mod r1 2))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.monster" name="crawl.monster"><h1 class="project-name">crawl.monster</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+     (= r1 r2) (mod r1 2))))</pre></td></tr><tr><td class="docs"><p>Damage cannot be less than 0</p>
+</td><td class="codes"><pre class="brush: clojure">(defn roll-damage 
+  [damage-dice]
+  (let [rtnval (throw-dice damage-dice)]
+    (if (&lt; rtnval 0)
+      0
+      rtnval)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.monster" name="crawl.monster"><h1 class="project-name">crawl.monster</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns crawl.monster
   (:require [clojure.java.io :as io]
             [clojure.edn :as edn]

@@ -6,6 +6,7 @@
             [clojure.test.check.properties :as prop]
             [crawl.combat :refer :all]
             [crawl.monster :refer :all]
+            [crawl.dice-test  :refer :all]
             ))
 
 
@@ -19,8 +20,6 @@
 ;; * 
   
 
-(def gen-dice-throw
-  (gen/tuple gen/nat gen/nat gen/int))
 
 (def gen-keyword (gen/fmap keyword (gen/not-empty gen/string-ascii)))
 
@@ -28,14 +27,14 @@
 (def gen-pid gen-keyword)
 (def gen-type (gen/not-empty gen/string-ascii) )
 (def gen-ac gen/s-pos-int)
-(def gen-ac-dice gen-dice-throw)
-(def gen-max-hp-dice gen-dice-throw)
+(def gen-ac-dice gen-dice-def)
+(def gen-max-hp-dice gen-dice-def)
 (def gen-max-hp gen/s-pos-int)
 (def gen-hp gen/nat)
-(def gen-attack-dice gen-dice-throw)
-(def gen-damage-dice gen-dice-throw)
+(def gen-attack-dice gen-dice-def)
+(def gen-damage-dice gen-dice-def)
 (def gen-loot gen/s-pos-int)
-(def gen-loot-dice gen-dice-throw)
+(def gen-loot-dice gen-dice-def)
 
 (def gen-monster-prototype
  (gen/fmap (partial apply ->MonsterPrototype)
@@ -57,9 +56,11 @@
   (= at new-at))
 
 (defn validate-defender [_ {:keys [hp] :as de} [stat _ new-de & rest]]
-  (if (= stat :miss)
-    (= de new-de)
-    true))
+  (let [new-hp (:hp new-de)]
+    (and (<= new-hp hp)
+         (if (= stat :miss)
+           (= de new-de)
+           true))))
 
 
 ;; ## Start the tests
