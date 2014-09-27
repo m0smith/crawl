@@ -19,6 +19,7 @@ A dungeon crawler
 [5 Faces of Dependency Injection in Clojure](http://software-ninja-ninja.blogspot.com/2014/04/5-faces-of-dependency-injection-in.html)
 
 "
+  :main crawl.core
   :url "https://github.com/m0smith/crawl"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
