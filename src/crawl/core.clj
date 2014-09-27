@@ -4,10 +4,17 @@
             [crawl.engine :refer :all]
             [crawl.context  :refer :all]))
 
+
+
 (defn play-game 
   "Create the initial game state."
   []
   (let [{:keys [catalog] :as context} (->AppContext (prototype-catalog))
         adventurer (create-monster (:adventurer catalog))
         state (default-start-state context adventurer)]
-    (take 10 (take-while running? (iterate iteration (merge state {:hp 5}))))))
+    (doseq [s (take-while running? (iterate iteration  state )) ]
+      (doseq [msg (messages s)]
+        (println msg)))))
+              
+(defn -main []
+  (play-game))
