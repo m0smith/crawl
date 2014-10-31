@@ -1,8 +1,15 @@
 
 [
    ; PID        TYPE          AC       MAX-HP    ATTACK   DAMAGE   LOOT
- [ :adventurer "adventurer"  [1 12 4] [3 10 10] [1 20 0] [1 8 0]  [0 0 0]   ]
- [ :human      "human"       [1 12 4] [3 10 10] [1 20 0] [1 8 0]  [1 6 0]   ]
- [ :rat-small  "rat"         [1 10 0] [1 4 0]   [1 20 0] [1 4 0]  [1 4 0]   ]
+   ; IMAGE
+ [ :adventurer "adventurer"  [1 12 4] [3 10 10] [1 20 0] [1 8 0]  [0 0 0]   
+  "images/Creatures/knight_concept_by_quintuscassius-d4xbniz.jpg"
+ ]
+ [ :human      "human"       [1 12 4] [3 10 10] [1 20 0] [1 8 0]  [1 6 0]   
+  "images/Creatures/knight_of_cydonia_by_sandrorybak-d5og55u.jpg"
+  ]
+ [ :rat-small  "rat"         [1 10 0] [1 4 0]   [1 20 0] [1 4 0]  [1 4 0]   
+  "images/Creatures/A_Skaven_by_Mablox.jpg"
+  ]
 ]
 

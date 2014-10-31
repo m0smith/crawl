@@ -1,4 +1,4 @@
-(defproject crawl "0.1.0-SNAPSHOT"
+(defproject crawl "0.2.1-SNAPSHOT"
   :description "
 # CRAWL
 A dungeon crawler
@@ -26,4 +26,5 @@ A dungeon crawler
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/test.check "0.5.9"]
                  [org.clojure/algo.monads "0.1.5"]
+                 [fx-clj "0.1.0"]
                  [marginalia "0.8.0"]])

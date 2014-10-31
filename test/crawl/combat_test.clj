@@ -7,6 +7,7 @@
             [crawl.combat :refer :all]
             [crawl.monster :refer :all]
             [crawl.dice-test  :refer :all]
+            [clojure.java.io :as io]
             ))
 
 
@@ -14,8 +15,8 @@
 
 ;; ## Attack
 ;; ### Generators:
-;; * MonsterPrototype [pid type ac max-hp attack-dice damage-dice loot]
-;; * two Monsters: [id pid type ac max-hp hp attack-dice damage-dice loot]
+;; * MonsterPrototype [pid type ac max-hp attack-dice damage-dice loot image]
+;; * two Monsters: [id pid type ac max-hp hp attack-dice damage-dice loot image]
 ;; ### Properties:
 ;; * 
   
@@ -35,10 +36,12 @@
 (def gen-damage-dice gen-dice-def)
 (def gen-loot gen/s-pos-int)
 (def gen-loot-dice gen-dice-def)
+(def gen-image (gen/elements (vector (file-seq (io/file "images/Creatures")))))
+  
 
 (def gen-monster-prototype
  (gen/fmap (partial apply ->MonsterPrototype)
-           (gen/tuple gen-pid gen-type gen-ac-dice gen-max-hp-dice gen-attack-dice gen-damage-dice gen-loot-dice)))
+           (gen/tuple gen-pid gen-type gen-ac-dice gen-max-hp-dice gen-attack-dice gen-damage-dice gen-loot-dice gen-image)))
 
 (def gen-monster
  (gen/fmap create-monster gen-monster-prototype))

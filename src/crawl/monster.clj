@@ -5,9 +5,9 @@
 
 
 
-(defrecord MonsterPrototype [pid type ac max-hp attack-dice damage-dice loot])
+(defrecord MonsterPrototype [pid type ac max-hp attack-dice damage-dice loot image])
 
-(defrecord Monster [id pid type ac max-hp hp attack-dice damage-dice loot])
+(defrecord Monster [id pid type ac max-hp hp attack-dice damage-dice loot image])
 
 
 (defn prototype-catalog 
@@ -24,7 +24,7 @@
 
 (defn create-monster 
   "Create an instance of a monster from a given MonstorPrototype"
-  [{:keys [pid type ac max-hp attack-dice damage-dice loot] :as prototype}]
+  [{:keys [pid type ac max-hp attack-dice damage-dice loot image] :as prototype}]
    (let [hp (throw-dice max-hp)]
      (->Monster (keyword (gensym (str type "-")))
                 pid
@@ -34,6 +34,7 @@
                 hp
                 attack-dice
                 damage-dice
-                (throw-dice loot))))
+                (throw-dice loot)
+                image)))
               
               
