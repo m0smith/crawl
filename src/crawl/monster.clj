@@ -1,14 +1,21 @@
 (ns crawl.monster
   (:require [clojure.java.io :as io]
             [clojure.edn :as edn]
+            [crawl.client :as client]
             [crawl.dice :refer :all]))
 
 
 
 (defrecord MonsterPrototype [pid type ac max-hp attack-dice damage-dice loot])
 
-(defrecord Monster [id pid type ac max-hp hp attack-dice damage-dice loot])
+(defrecord Monster [id pid type ac max-hp hp attack-dice damage-dice loot client])
 
+
+(defn simple-ai-client 
+  "Return a Client record."
+  []
+  (client/create-client))
+  
 
 (defn prototype-catalog 
   "Create and return the catalog of monster prototypes.  The catalog is a map of
@@ -34,6 +41,7 @@
                 hp
                 attack-dice
                 damage-dice
-                (throw-dice loot))))
+                (throw-dice loot)
+                (simple-ai-client))))
               
               

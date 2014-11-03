@@ -2905,7 +2905,12 @@ net.brehaut.ClojureTools = (function (SH) {
 <h3>monads, applicaton context and dependecy injection</h3>
 
 <p><a href="http://software-ninja-ninja.blogspot.com/2014/04/5-faces-of-dependency-injection-in.html">5 Faces of Dependency Injection in Clojure</a></p>
-</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.6.0</td></tr><tr><td class="dep-name">org.clojure/test.check</td><td class="dotted"><hr /></td><td class="dep-version">0.5.9</td></tr><tr><td class="dep-name">org.clojure/algo.monads</td><td class="dotted"><hr /></td><td class="dep-version">0.1.5</td></tr><tr><td class="dep-name">marginalia</td><td class="dotted"><hr /></td><td class="dep-version">0.8.0</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#crawl.combat">crawl.combat</a></li><li><a href="#crawl.context">crawl.context</a></li><li><a href="#crawl.core">crawl.core</a></li><li><a href="#crawl.dice">crawl.dice</a></li><li><a href="#crawl.monster">crawl.monster</a></li><li><a href="#crawl.state">crawl.state</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.combat" name="crawl.combat"><h1 class="project-name">crawl.combat</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.6.0</td></tr><tr><td class="dep-name">org.clojure/algo.monads</td><td class="dotted"><hr /></td><td class="dep-version">0.1.5</td></tr><tr><td class="dep-name">org.clojure/core.async</td><td class="dotted"><hr /></td><td class="dep-version">0.1.346.0-17112a-alpha</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#crawl.client">crawl.client</a></li><li><a href="#crawl.combat">crawl.combat</a></li><li><a href="#crawl.context">crawl.context</a></li><li><a href="#crawl.core">crawl.core</a></li><li><a href="#crawl.dice">crawl.dice</a></li><li><a href="#crawl.engine">crawl.engine</a></li><li><a href="#crawl.monster">crawl.monster</a></li><li><a href="#crawl.state">crawl.state</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.client" name="crawl.client"><h1 class="project-name">crawl.client</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(ns crawl.client
+  (:require [[clojure.core.async :as async ]]))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defrecord Client [client-id data-channel command-channel])</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn create-client []
+  (-&gt;Client (gensym &quot;client_&quot;) (chan) (chan)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.combat" name="crawl.combat"><h1 class="project-name">crawl.combat</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns crawl.combat
   (:require [crawl.dice :refer :all]))</pre></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(defn attack [{:keys [attack-dice damage-dice ] :as attacker} 
@@ -2938,16 +2943,18 @@ net.brehaut.ClojureTools = (function (SH) {
 </td><td class="codes"><pre class="brush: clojure">(ns crawl.core
   (:require [crawl.monster :refer :all]
             [crawl.state :refer :all]
-            [crawl.context  :refer :all]))</pre></td></tr><tr><td class="docs"><p>I don't do a whole lot.</p>
-</td><td class="codes"><pre class="brush: clojure">(defn foo
-  [x]
-  (println x &quot;Hello, World!&quot;))</pre></td></tr><tr><td class="docs"><p>Create the initial game state.</p>
+            [crawl.engine :refer :all]
+            [crawl.context  :refer :all]))</pre></td></tr><tr><td class="docs"><p>Create the initial game state.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn play-game 
   []
   (let [{:keys [catalog] :as context} (-&gt;AppContext (prototype-catalog))
         adventurer (create-monster (:adventurer catalog))
         state (default-start-state context adventurer)]
-    state))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.dice" name="crawl.dice"><h1 class="project-name">crawl.dice</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+    (doseq [s (take-while running? (iterate iteration  state )) ]
+      (doseq [msg (messages s)]
+        (println msg)))))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn -main []
+  (play-game))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.dice" name="crawl.dice"><h1 class="project-name">crawl.dice</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns crawl.dice)</pre></td></tr><tr><td class="docs"><p>dice def:  is a triple of <code>[dice sides modifier]</code>. <br />
 throw spec is a string like <code>"1d5+3"</code> or <code>"1d5-3"</code> or <code>"2d10"</code></p>
 </td><td class="codes"></td></tr><tr><td class="docs">
@@ -3030,13 +3037,89 @@ throw spec is a string like <code>"1d5+3"</code> or <code>"1d5-3"</code> or <cod
   (let [rtnval (throw-dice damage-dice)]
     (if (&lt; rtnval 0)
       0
-      rtnval)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.monster" name="crawl.monster"><h1 class="project-name">crawl.monster</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+      rtnval)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.engine" name="crawl.engine"><h1 class="project-name">crawl.engine</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(ns crawl.engine
+  (:require [crawl.state :refer :all]
+            [crawl.combat :refer :all]
+            [crawl.dice :refer :all]
+            [crawl.monster :refer :all]))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn combat-mode-mesage [state init monster]
+  (if (= init 0)
+    (message-add-&gt; state &quot;you attack the &quot; (:type monster)) 
+    (message-add-&gt; state &quot;the &quot; (:type monster) &quot; surpises you&quot;))) </pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn enter-combat-mode [state]
+  (let [ids (catalog-ids state)
+        pid (rand-nth ids)
+        monster (create-monster (prototype state pid))
+        adventurer (adventurer state)
+        init (roll-initiative)
+        new-state (-&gt; state 
+                      (zoo-append-&gt; monster)
+                      (combatants-set-&gt; adventurer (:id monster))
+                      (combatants-next-&gt; init)
+                      (combat-mode-mesage init monster)
+                      (current-mode-&gt; :combat))]
+    new-state))</pre></td></tr><tr><td class="docs"><p>Does not validate the mode</p>
+</td><td class="codes"><pre class="brush: clojure">(defn move 
+  [state]
+  (if (roll-for-monster)
+      (enter-combat-mode state)
+      (message-add-&gt; state  &quot;nothing to see here&quot;)))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn adventurer-wins [state at {:keys [loot type] :as de}]
+  (let [at (update-in at [:loot] + loot)]
+    (-&gt; state
+        (message-add-&gt; (str type &quot; is killed with ~&quot; loot))
+        (current-mode-&gt; :move)
+        (zoo-append-&gt; at)
+        (zoo-append-&gt; de))))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn adventurer-loses [state at de]
+  (let [moves (moves state)]
+    (-&gt; state
+        (message-add-&gt; (str &quot;adventurer loses with ~&quot; (:loot de) &quot; in &quot; moves &quot; moves&quot;))
+        (zoo-append-&gt; at)
+        (zoo-append-&gt; de)
+        running-&gt;final)))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn combat-continues [state at de]
+    (-&gt; state
+        (zoo-append-&gt; at)
+        (zoo-append-&gt; de)
+        combatants-next-&gt;))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn combat
+  [state]
+  (let [h 1
+        adv (adventurer state)
+        [at de] (combatants-as-monsters state)
+        [stat new-at new-de diff msg] (attack at de)
+        state (message-add-&gt; state (str &quot;   &quot; msg))]
+    (if (&lt; (:hp new-de) 0)
+      (if (= adv (:id new-at))
+        (adventurer-wins state new-at new-de)
+        (adventurer-loses state new-at new-de))
+      (combat-continues state new-at new-de))))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn take-turn [state]
+  (let [mode (current-mode state)]
+    (condp = mode
+      :move (move state)
+      :combat (combat state)
+      state)))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn iteration 
+  [state]
+  (let [running (running? state)]
+    (condp = running
+      nil state
+      :final (running-&gt;post-final state)
+      (-&gt; state
+          pre-&gt;
+          take-turn
+          post-&gt;))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.monster" name="crawl.monster"><h1 class="project-name">crawl.monster</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns crawl.monster
   (:require [clojure.java.io :as io]
             [clojure.edn :as edn]
             [crawl.dice :refer :all]))</pre></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(defrecord MonsterPrototype [pid type ac max-hp attack-dice damage-dice loot])</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defrecord Monster [id pid type ac max-hp hp attack-dice damage-dice loot])</pre></td></tr><tr><td class="docs"><p>Create and return the catalog of monster prototypes.  The catalog is a map of
+</td><td class="codes"><pre class="brush: clojure">(defrecord Monster [id pid type ac max-hp hp attack-dice damage-dice loot client])</pre></td></tr><tr><td class="docs"><p>Return a Client record.</p>
+</td><td class="codes"><pre class="brush: clojure">(defn simple-ai-client 
+  [[(chan) (chan)]])</pre></td></tr><tr><td class="docs"><p>Create and return the catalog of monster prototypes.  The catalog is a map of
 <code>pid -&gt; MonsterPrototype</code>.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn prototype-catalog 
   []
@@ -3058,10 +3141,81 @@ throw spec is a string like <code>"1d5+3"</code> or <code>"1d5-3"</code> or <cod
                 attack-dice
                 damage-dice
                 (throw-dice loot))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.state" name="crawl.state"><h1 class="project-name">crawl.state</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(ns crawl.state)</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defrecord GameState [context running mode combatants zoo adventurer] )</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(ns crawl.state)</pre></td></tr><tr><td class="docs"><h2>State</h2>
+
+<p>functions ending with -> return a new state</p>
+</td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defrecord Transient [messages errors])</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn create-transient [] (Transient. [] []))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defrecord GameState [context running mode combatants zoo adventurer transient moves] )</pre></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(defn default-start-state [context adventurer]
-  (-&gt;GameState context true :move nil { (:id adventurer) adventurer } (:id adventurer)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr></table><div class="footer">Generated by <a href="https://github.com/gdeer81/marginalia">Marginalia</a>.&nbsp;&nbsp;Syntax highlighting provided by Alex Gorbatchev's <a href="http://alexgorbatchev.com/SyntaxHighlighter/">SyntaxHighlighter</a><div id="floating-toc"><ul><li class="floating-toc-li" id="floating-toc_crawl.combat">crawl.combat</li><li class="floating-toc-li" id="floating-toc_crawl.context">crawl.context</li><li class="floating-toc-li" id="floating-toc_crawl.core">crawl.core</li><li class="floating-toc-li" id="floating-toc_crawl.dice">crawl.dice</li><li class="floating-toc-li" id="floating-toc_crawl.monster">crawl.monster</li><li class="floating-toc-li" id="floating-toc_crawl.state">crawl.state</li></ul></div></div><script type="text/javascript">SyntaxHighlighter.defaults['gutter'] = false;
+  (let [transient (create-transient)]
+    (-&gt;GameState context true :move nil { (:id adventurer) adventurer } (:id adventurer) transient 0)))</pre></td></tr><tr><td class="docs"><h3>context</h3>
+</td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn catalog-ids [{:keys [context adventurer zoo]}]
+  (let [adv (zoo adventurer)]
+    (remove #{(:pid adv)} (keys (:catalog context)))))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn prototype [{:keys [context]} pid]
+  (-&gt; context :catalog pid))</pre></td></tr><tr><td class="docs"><h3>Running</h3>
+</td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn running? [{:keys [running]}]
+  running)</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn running-&gt;final [state]
+  (merge state {:running :final}))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn running-&gt;post-final [state]
+  (merge state {:running nil}))</pre></td></tr><tr><td class="docs"><h3>Mode</h3>
+</td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn current-mode [{:keys [mode]}]
+  mode)</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn current-mode-&gt; [state new-mode]
+    (assoc state :mode new-mode))</pre></td></tr><tr><td class="docs"><h3>Zoo</h3>
+</td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn zoo-append-&gt; [{:keys [zoo] :as state} {:keys [id] :as monster} ]
+  (assoc-in state [:zoo id] monster))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn monster-for [{:keys [zoo]} id]
+  (zoo id))</pre></td></tr><tr><td class="docs"><h3>Combatants</h3>
+</td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn combatants-set-&gt; [state &amp; combs]
+  (assoc state :combatants  combs))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn rotate 
+  ([coll] (rotate 1 coll))
+  ([num coll]
+    (if (&lt; num 1)
+      coll
+      (concat (drop num coll) (take num coll)))))</pre></td></tr><tr><td class="docs"><p>Make the next combatant</p>
+</td><td class="codes"><pre class="brush: clojure">(defn combatants-next-&gt; 
+  ([{:keys [combatants] :as state}]
+     (assoc state :combatants (rotate combatants)))
+  ([{:keys [combatants] :as state} num]
+     (assoc state :combatants (rotate num combatants))))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn combatants [{:keys [combatants]}]
+  combatants)</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn combatants-as-monsters [{:keys [combatants] :as state}]
+  (map (partial monster-for state) combatants))</pre></td></tr><tr><td class="docs"><h3>Adventurer</h3>
+</td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn adventurer [{:keys [adventurer]}]
+  adventurer)</pre></td></tr><tr><td class="docs"><h3>Transient</h3>
+</td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn message-add-&gt; [state &amp; message]
+  (update-in state [:transient :messages] conj (apply str message)))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn messages [{:keys [transient]}]
+  (:messages transient))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn error-add-&gt; [state error]
+  (update-in state [:transient :errors] conj error))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn transient-clear-&gt; [state]
+  (assoc state :transient (create-transient)))</pre></td></tr><tr><td class="docs"><h2>Moves</h2>
+</td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn moves-next-&gt; [state]
+  (update-in state [:moves] inc))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn moves [{:keys [moves]}]
+  moves)</pre></td></tr><tr><td class="docs"><h2>Pre and Post</h2>
+</td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn pre-&gt; [state]
+  (-&gt; state
+      transient-clear-&gt;
+      moves-next-&gt;))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn post-&gt; [state]
+  state)</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr></table><div class="footer">Generated by <a href="https://github.com/gdeer81/marginalia">Marginalia</a>.&nbsp;&nbsp;Syntax highlighting provided by Alex Gorbatchev's <a href="http://alexgorbatchev.com/SyntaxHighlighter/">SyntaxHighlighter</a><div id="floating-toc"><ul><li class="floating-toc-li" id="floating-toc_crawl.client">crawl.client</li><li class="floating-toc-li" id="floating-toc_crawl.combat">crawl.combat</li><li class="floating-toc-li" id="floating-toc_crawl.context">crawl.context</li><li class="floating-toc-li" id="floating-toc_crawl.core">crawl.core</li><li class="floating-toc-li" id="floating-toc_crawl.dice">crawl.dice</li><li class="floating-toc-li" id="floating-toc_crawl.engine">crawl.engine</li><li class="floating-toc-li" id="floating-toc_crawl.monster">crawl.monster</li><li class="floating-toc-li" id="floating-toc_crawl.state">crawl.state</li></ul></div></div><script type="text/javascript">SyntaxHighlighter.defaults['gutter'] = false;
 SyntaxHighlighter.all();
 
 // hackity hack
