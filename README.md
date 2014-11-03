@@ -6,6 +6,8 @@ A dungeon crawler
 
 Battle things and get rich.
 
+    lein run
+
 ## License
 
 Copyright © 2014 Matthew O. Smith

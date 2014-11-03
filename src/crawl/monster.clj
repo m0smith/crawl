@@ -6,10 +6,9 @@
 
 
 
-(defrecord MonsterPrototype [pid type ac max-hp attack-dice damage-dice loot])
+(defrecord MonsterPrototype [pid type ac max-hp attack-dice damage-dice loot image])
 
-(defrecord Monster [id pid type ac max-hp hp attack-dice damage-dice loot client])
-
+(defrecord Monster [id pid type ac max-hp hp attack-dice damage-dice loot image client])
 
 (defn simple-ai-client 
   "Return a Client record."
@@ -31,7 +30,7 @@
 
 (defn create-monster 
   "Create an instance of a monster from a given MonstorPrototype"
-  [{:keys [pid type ac max-hp attack-dice damage-dice loot] :as prototype}]
+  [{:keys [pid type ac max-hp attack-dice damage-dice loot image] :as prototype}]
    (let [hp (throw-dice max-hp)]
      (->Monster (keyword (gensym (str type "-")))
                 pid
@@ -42,6 +41,8 @@
                 attack-dice
                 damage-dice
                 (throw-dice loot)
+                image
                 (simple-ai-client))))
+
               
               
