@@ -1,8 +1,10 @@
 (ns crawl.monster
-  (:require [clojure.java.io :as io]
+  (:require [clojure.core.async :as async ]
             [clojure.edn :as edn]
+            [clojure.java.io :as io]
             [crawl.client :as client]
-            [crawl.dice :refer :all]))
+            [crawl.dice :refer :all]
+            ))
 
 
 
@@ -13,7 +15,13 @@
 (defn simple-ai-client 
   "Return a Client record."
   []
-  (client/create-client))
+  (let [{:keys [data-channel command-channel] :as rtnval} (client/create-client)]
+    (async/go
+      (loop [data (async/<!! data-channel)]
+        (when data
+          (async/>! command-channel :move)
+          (recur (async/<! data-channel)))))
+    rtnval))
   
 
 (defn prototype-catalog 
@@ -31,7 +39,8 @@
 (defn create-monster 
   "Create an instance of a monster from a given MonstorPrototype"
   [{:keys [pid type ac max-hp attack-dice damage-dice loot image] :as prototype}]
-   (let [hp (throw-dice max-hp)]
+   (let [hp (throw-dice max-hp)
+         client (simple-ai-client)]
      (->Monster (keyword (gensym (str type "-")))
                 pid
                 type
@@ -42,7 +51,7 @@
                 damage-dice
                 (throw-dice loot)
                 image
-                (simple-ai-client))))
+                client)))
 
               
               

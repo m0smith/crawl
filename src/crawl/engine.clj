@@ -1,5 +1,6 @@
 (ns crawl.engine
-  (:require [crawl.state :refer :all]
+  (:require [clojure.core.async :as async ]
+            [crawl.state :refer :all]
             [crawl.combat :refer :all]
             [crawl.dice :refer :all]
             [crawl.monster :refer :all]))
@@ -57,19 +58,30 @@
         (zoo-append-> de)
         combatants-next->))
 
-(defn combat
-  ""
-  [state]
-  (let [h 1
-        adv (adventurer state)
-        [at de] (combatants-as-monsters state)
-        [stat new-at new-de diff msg] (attack at de)
+
+(defn combat* [state at de adv]
+  (let [[stat new-at new-de diff msg] (attack at de)
         state (message-add-> state (str "   " msg))]
     (if (< (:hp new-de) 0)
       (if (= adv (:id new-at))
         (adventurer-wins state new-at new-de)
         (adventurer-loses state new-at new-de))
       (combat-continues state new-at new-de))))
+
+
+(defn combat
+  ""
+  [state]
+  (let [h 1
+        adv (adventurer state)
+        [at de] (combatants-as-monsters state)
+        {:keys [data-channel command-channel]} (:client at)]
+    ;;(println "data: :start-turn" data-channel)
+    (async/>!! data-channel :start-turn)
+    (async/<!! command-channel)
+    (combat* state at de adv)))
+        
+
       
       
 
