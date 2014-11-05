@@ -4,7 +4,11 @@
             [clojure.java.io :as io]
             [crawl.client :as client]
             [crawl.dice :refer :all]
-            ))
+            [crawl.state :refer :all]
+            [crawl.client.data :refer :all]
+            [crawl.client.command :refer :all]
+            )
+  (:import [crawl.client.data StartTurn]))
 
 
 
@@ -12,15 +16,29 @@
 
 (defrecord Monster [id pid type ac max-hp hp attack-dice damage-dice loot image client])
 
+(defprotocol MonsterClient
+  (process-data [data]))
+
+(extend-protocol MonsterClient
+  StartTurn
+  (process-data [{:keys [monster-id state] :as data}]
+    (let [{:keys [pid client] :as monster} (monster-for state monster-id)
+          {:keys [command-channel]} client
+          ;_ (println "process-data: " pid command-channel monster)
+          delta (if (= :adventurer pid) [1 0] [-1 0]) ]
+      (async/go
+        (async/>! command-channel (->Move monster-id delta))))))
+    
+
 (defn simple-ai-client 
   "Return a Client record."
-  []
+  [monster-id pid]
   (let [{:keys [data-channel command-channel] :as rtnval} (client/create-client)]
     (async/go
       (loop [data (async/<!! data-channel)]
         (when data
-          (async/>! command-channel :move)
-          (recur (async/<! data-channel)))))
+          (process-data data)
+          (recur (async/<!!  data-channel)))))
     rtnval))
   
 
@@ -40,8 +58,9 @@
   "Create an instance of a monster from a given MonstorPrototype"
   [{:keys [pid type ac max-hp attack-dice damage-dice loot image] :as prototype}]
    (let [hp (throw-dice max-hp)
-         client (simple-ai-client)]
-     (->Monster (keyword (gensym (str type "-")))
+         monster-id (keyword (gensym (str type "-")))
+         client (simple-ai-client monster-id pid)]
+     (->Monster monster-id
                 pid
                 type
                 (throw-dice ac)

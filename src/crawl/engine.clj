@@ -1,6 +1,7 @@
 (ns crawl.engine
   (:require [clojure.core.async :as async ]
             [crawl.state :refer :all]
+            [crawl.client.data :refer :all]
             [crawl.combat :refer :all]
             [crawl.dice :refer :all]
             [crawl.monster :refer :all]))
@@ -77,7 +78,7 @@
         [at de] (combatants-as-monsters state)
         {:keys [data-channel command-channel]} (:client at)]
     ;;(println "data: :start-turn" data-channel)
-    (async/>!! data-channel :start-turn)
+    (async/>!! data-channel (->StartTurn state (:id at)))
     (async/<!! command-channel)
     (combat* state at de adv)))
         

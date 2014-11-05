@@ -1,5 +1,5 @@
 (ns crawl.client.data)
 
-(defrecord StartTurn [monster-id])
-(defrecord Hit [monster-id])
-(defrecord Miss [monster-id])
+(defrecord Hit [state monster-id])
+(defrecord Miss [state monster-id])
+(defrecord StartTurn [state monster-id])

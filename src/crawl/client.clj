@@ -5,3 +5,10 @@
 
 (defn create-client []
   (->Client (gensym "client_") (async/chan) (async/chan)))
+
+
+(defprotocol CommandChannel
+  (process-command [command state]))
+
+(defprotocol DataChannel
+  (process-data    [data state]))
