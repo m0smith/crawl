@@ -2,6 +2,7 @@
   (:require [crawl.monster :refer :all]
             [crawl.state :refer :all]
             [crawl.engine :refer :all]
+            [com.matthiasnehlsen.inspect :as inspect :refer [inspect]]
             [crawl.context  :refer :all]))
 
 
@@ -17,4 +18,7 @@
         (println msg)))))
               
 (defn -main []
-  (play-game))
+  (inspect/start)
+  (play-game)
+  (inspect/stop)
+  )

@@ -26,10 +26,13 @@ A dungeon crawler
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [fx-clj "0.1.0"]
                  [org.clojure/algo.monads "0.1.5"]
+                 [com.matthiasnehlsen/inspect "0.1.1"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]]
+  
   :profiles { :dev 
              { :dependencies [
-                              [marginalia "0.8.0"] 
+                              [marginalia "0.8.0"]
+                              
                               [org.clojure/test.check "0.5.9"] ;; property testing
                               ]}})
 
