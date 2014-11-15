@@ -7,6 +7,8 @@
             [crawl.state :refer :all]
             [crawl.client.data :refer :all]
             [crawl.client.command :refer :all]
+            [crawl.client.protocol :refer :all]
+            [crawl.ui.javafx :refer [javafx-ui]]
             )
   (:import [crawl.client.data StartTurn]))
 
@@ -16,10 +18,8 @@
 
 (defrecord Monster [id pid type ac max-hp hp attack-dice damage-dice loot image client])
 
-(defprotocol MonsterClient
-  (process-data [data]))
 
-(extend-protocol MonsterClient
+(extend-protocol DataChannel
   StartTurn
   (process-data [{:keys [monster-id state] :as data}]
     (let [{:keys [pid client] :as monster} (monster-for state monster-id)
@@ -59,7 +59,7 @@
   [{:keys [pid type ac max-hp attack-dice damage-dice loot image] :as prototype}]
    (let [hp (throw-dice max-hp)
          monster-id (keyword (gensym (str type "-")))
-         client (simple-ai-client monster-id pid)]
+         client (if (= pid :adventurer) (javafx-ui monster-id pid) (simple-ai-client monster-id pid))]
      (->Monster monster-id
                 pid
                 type
