@@ -2905,16 +2905,22 @@ net.brehaut.ClojureTools = (function (SH) {
 <h3>monads, applicaton context and dependecy injection</h3>
 
 <p><a href="http://software-ninja-ninja.blogspot.com/2014/04/5-faces-of-dependency-injection-in.html">5 Faces of Dependency Injection in Clojure</a></p>
-<<<<<<< HEAD
-</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.6.0</td></tr><tr><td class="dep-name">org.clojure/algo.monads</td><td class="dotted"><hr /></td><td class="dep-version">0.1.5</td></tr><tr><td class="dep-name">org.clojure/core.async</td><td class="dotted"><hr /></td><td class="dep-version">0.1.346.0-17112a-alpha</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#crawl.client">crawl.client</a></li><li><a href="#crawl.combat">crawl.combat</a></li><li><a href="#crawl.context">crawl.context</a></li><li><a href="#crawl.core">crawl.core</a></li><li><a href="#crawl.dice">crawl.dice</a></li><li><a href="#crawl.engine">crawl.engine</a></li><li><a href="#crawl.monster">crawl.monster</a></li><li><a href="#crawl.state">crawl.state</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.client" name="crawl.client"><h1 class="project-name">crawl.client</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.6.0</td></tr><tr><td class="dep-name">fx-clj</td><td class="dotted"><hr /></td><td class="dep-version">0.1.0</td></tr><tr><td class="dep-name">org.clojure/algo.monads</td><td class="dotted"><hr /></td><td class="dep-version">0.1.5</td></tr><tr><td class="dep-name">org.clojure/core.async</td><td class="dotted"><hr /></td><td class="dep-version">0.1.346.0-17112a-alpha</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#crawl.client">crawl.client</a></li><li><a href="#crawl.client.command">crawl.client.command</a></li><li><a href="#crawl.client.data">crawl.client.data</a></li><li><a href="#crawl.combat">crawl.combat</a></li><li><a href="#crawl.context">crawl.context</a></li><li><a href="#crawl.core">crawl.core</a></li><li><a href="#crawl.dice">crawl.dice</a></li><li><a href="#crawl.engine">crawl.engine</a></li><li><a href="#crawl.monster">crawl.monster</a></li><li><a href="#crawl.state">crawl.state</a></li><li><a href="#crawl.ui.javafx">crawl.ui.javafx</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.client" name="crawl.client"><h1 class="project-name">crawl.client</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns crawl.client
-  (:require [[clojure.core.async :as async ]]))</pre></td></tr><tr><td class="docs">
+  (:require [clojure.core.async :as async ]))</pre></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(defrecord Client [client-id data-channel command-channel])</pre></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(defn create-client []
-  (-&gt;Client (gensym &quot;client_&quot;) (chan) (chan)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.combat" name="crawl.combat"><h1 class="project-name">crawl.combat</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
-=======
-</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.6.0</td></tr><tr><td class="dep-name">org.clojure/test.check</td><td class="dotted"><hr /></td><td class="dep-version">0.5.9</td></tr><tr><td class="dep-name">org.clojure/algo.monads</td><td class="dotted"><hr /></td><td class="dep-version">0.1.5</td></tr><tr><td class="dep-name">fx-clj</td><td class="dotted"><hr /></td><td class="dep-version">0.1.0</td></tr><tr><td class="dep-name">marginalia</td><td class="dotted"><hr /></td><td class="dep-version">0.8.0</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#crawl.combat">crawl.combat</a></li><li><a href="#crawl.context">crawl.context</a></li><li><a href="#crawl.core">crawl.core</a></li><li><a href="#crawl.dice">crawl.dice</a></li><li><a href="#crawl.engine">crawl.engine</a></li><li><a href="#crawl.monster">crawl.monster</a></li><li><a href="#crawl.state">crawl.state</a></li><li><a href="#crawl.ui.javafx">crawl.ui.javafx</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.combat" name="crawl.combat"><h1 class="project-name">crawl.combat</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
->>>>>>> 40420fe04b625d8b04ea807a221eca6eee2abef9
+  (-&gt;Client (gensym &quot;client_&quot;) (async/chan) (async/chan)))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defprotocol CommandChannel
+  (process-command [command state]))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defprotocol DataChannel
+  (process-data    [data state]))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.client.command" name="crawl.client.command"><h1 class="project-name">crawl.client.command</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(ns crawl.client.command)</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defrecord Move [monster-id delta])</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.client.data" name="crawl.client.data"><h1 class="project-name">crawl.client.data</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(ns crawl.client.data)</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defrecord Hit [state monster-id])
+(defrecord Miss [state monster-id])
+(defrecord StartTurn [state monster-id])</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.combat" name="crawl.combat"><h1 class="project-name">crawl.combat</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns crawl.combat
   (:require [crawl.dice :refer :all]))</pre></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(defn attack [{:keys [attack-dice damage-dice ] :as attacker} 
@@ -3043,7 +3049,9 @@ throw spec is a string like <code>"1d5+3"</code> or <code>"1d5-3"</code> or <cod
       0
       rtnval)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.engine" name="crawl.engine"><h1 class="project-name">crawl.engine</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns crawl.engine
-  (:require [crawl.state :refer :all]
+  (:require [clojure.core.async :as async ]
+            [crawl.state :refer :all]
+            [crawl.client.data :refer :all]
             [crawl.combat :refer :all]
             [crawl.dice :refer :all]
             [crawl.monster :refer :all]))</pre></td></tr><tr><td class="docs">
@@ -3088,18 +3096,24 @@ throw spec is a string like <code>"1d5+3"</code> or <code>"1d5-3"</code> or <cod
         (zoo-append-&gt; at)
         (zoo-append-&gt; de)
         combatants-next-&gt;))</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defn combat
-  [state]
-  (let [h 1
-        adv (adventurer state)
-        [at de] (combatants-as-monsters state)
-        [stat new-at new-de diff msg] (attack at de)
+</td><td class="codes"><pre class="brush: clojure">(defn combat* [state at de adv]
+  (let [[stat new-at new-de diff msg] (attack at de)
         state (message-add-&gt; state (str &quot;   &quot; msg))]
     (if (&lt; (:hp new-de) 0)
       (if (= adv (:id new-at))
         (adventurer-wins state new-at new-de)
         (adventurer-loses state new-at new-de))
       (combat-continues state new-at new-de))))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defn combat
+  [state]
+  (let [h 1
+        adv (adventurer state)
+        [at de] (combatants-as-monsters state)
+        {:keys [data-channel command-channel]} (:client at)]
+    ;;(println &quot;data: :start-turn&quot; data-channel)
+    (async/&gt;!! data-channel (-&gt;StartTurn state (:id at)))
+    (async/&lt;!! command-channel)
+    (combat* state at de adv)))</pre></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(defn take-turn [state]
   (let [mode (current-mode state)]
     (condp = mode
@@ -3117,18 +3131,37 @@ throw spec is a string like <code>"1d5+3"</code> or <code>"1d5-3"</code> or <cod
           take-turn
           post-&gt;))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.monster" name="crawl.monster"><h1 class="project-name">crawl.monster</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns crawl.monster
-  (:require [clojure.java.io :as io]
+  (:require [clojure.core.async :as async ]
             [clojure.edn :as edn]
-            [crawl.dice :refer :all]))</pre></td></tr><tr><td class="docs">
-<<<<<<< HEAD
-</td><td class="codes"><pre class="brush: clojure">(defrecord MonsterPrototype [pid type ac max-hp attack-dice damage-dice loot])</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defrecord Monster [id pid type ac max-hp hp attack-dice damage-dice loot client])</pre></td></tr><tr><td class="docs"><p>Return a Client record.</p>
-</td><td class="codes"><pre class="brush: clojure">(defn simple-ai-client 
-  [[(chan) (chan)]])</pre></td></tr><tr><td class="docs"><p>Create and return the catalog of monster prototypes.  The catalog is a map of
-=======
+            [clojure.java.io :as io]
+            [crawl.client :as client]
+            [crawl.dice :refer :all]
+            [crawl.state :refer :all]
+            [crawl.client.data :refer :all]
+            [crawl.client.command :refer :all])
+  (:import [crawl.client.data StartTurn]))</pre></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(defrecord MonsterPrototype [pid type ac max-hp attack-dice damage-dice loot image])</pre></td></tr><tr><td class="docs">
-</td><td class="codes"><pre class="brush: clojure">(defrecord Monster [id pid type ac max-hp hp attack-dice damage-dice loot image])</pre></td></tr><tr><td class="docs"><p>Create and return the catalog of monster prototypes.  The catalog is a map of
->>>>>>> 40420fe04b625d8b04ea807a221eca6eee2abef9
+</td><td class="codes"><pre class="brush: clojure">(defrecord Monster [id pid type ac max-hp hp attack-dice damage-dice loot image client])</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(defprotocol MonsterClient
+  (process-data [data]))</pre></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(extend-protocol MonsterClient
+  StartTurn
+  (process-data [{:keys [monster-id state] :as data}]
+    (let [{:keys [pid client] :as monster} (monster-for state monster-id)
+          {:keys [command-channel]} client
+          ;_ (println &quot;process-data: &quot; pid command-channel monster)
+          delta (if (= :adventurer pid) [1 0] [-1 0]) ]
+      (async/go
+        (async/&gt;! command-channel (-&gt;Move monster-id delta))))))</pre></td></tr><tr><td class="docs"><p>Return a Client record.</p>
+</td><td class="codes"><pre class="brush: clojure">(defn simple-ai-client 
+  [monster-id pid]
+  (let [{:keys [data-channel command-channel] :as rtnval} (client/create-client)]
+    (async/go
+      (loop [data (async/&lt;!! data-channel)]
+        (when data
+          (process-data data)
+          (recur (async/&lt;!!  data-channel)))))
+    rtnval))</pre></td></tr><tr><td class="docs"><p>Create and return the catalog of monster prototypes.  The catalog is a map of
 <code>pid -&gt; MonsterPrototype</code>.</p>
 </td><td class="codes"><pre class="brush: clojure">(defn prototype-catalog 
   []
@@ -3140,8 +3173,10 @@ throw spec is a string like <code>"1d5+3"</code> or <code>"1d5-3"</code> or <cod
     (zipmap (map :pid vals) vals)))</pre></td></tr><tr><td class="docs"><p>Create an instance of a monster from a given MonstorPrototype</p>
 </td><td class="codes"><pre class="brush: clojure">(defn create-monster 
   [{:keys [pid type ac max-hp attack-dice damage-dice loot image] :as prototype}]
-   (let [hp (throw-dice max-hp)]
-     (-&gt;Monster (keyword (gensym (str type &quot;-&quot;)))
+   (let [hp (throw-dice max-hp)
+         monster-id (keyword (gensym (str type &quot;-&quot;)))
+         client (simple-ai-client monster-id pid)]
+     (-&gt;Monster monster-id
                 pid
                 type
                 (throw-dice ac)
@@ -3149,12 +3184,9 @@ throw spec is a string like <code>"1d5+3"</code> or <code>"1d5-3"</code> or <cod
                 hp
                 attack-dice
                 damage-dice
-<<<<<<< HEAD
-                (throw-dice loot))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.state" name="crawl.state"><h1 class="project-name">crawl.state</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
-=======
                 (throw-dice loot)
-                image)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.state" name="crawl.state"><h1 class="project-name">crawl.state</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
->>>>>>> 40420fe04b625d8b04ea807a221eca6eee2abef9
+                image
+                client)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.state" name="crawl.state"><h1 class="project-name">crawl.state</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns crawl.state)</pre></td></tr><tr><td class="docs"><h2>State</h2>
 
 <p>functions ending with -> return a new state</p>
@@ -3229,9 +3261,6 @@ throw spec is a string like <code>"1d5+3"</code> or <code>"1d5-3"</code> or <cod
       transient-clear-&gt;
       moves-next-&gt;))</pre></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(defn post-&gt; [state]
-<<<<<<< HEAD
-  state)</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr></table><div class="footer">Generated by <a href="https://github.com/gdeer81/marginalia">Marginalia</a>.&nbsp;&nbsp;Syntax highlighting provided by Alex Gorbatchev's <a href="http://alexgorbatchev.com/SyntaxHighlighter/">SyntaxHighlighter</a><div id="floating-toc"><ul><li class="floating-toc-li" id="floating-toc_crawl.client">crawl.client</li><li class="floating-toc-li" id="floating-toc_crawl.combat">crawl.combat</li><li class="floating-toc-li" id="floating-toc_crawl.context">crawl.context</li><li class="floating-toc-li" id="floating-toc_crawl.core">crawl.core</li><li class="floating-toc-li" id="floating-toc_crawl.dice">crawl.dice</li><li class="floating-toc-li" id="floating-toc_crawl.engine">crawl.engine</li><li class="floating-toc-li" id="floating-toc_crawl.monster">crawl.monster</li><li class="floating-toc-li" id="floating-toc_crawl.state">crawl.state</li></ul></div></div><script type="text/javascript">SyntaxHighlighter.defaults['gutter'] = false;
-=======
   state)</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#crawl.ui.javafx" name="crawl.ui.javafx"><h1 class="project-name">crawl.ui.javafx</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns crawl.ui.javafx
   (:require [fx-clj.core :as fx]))</pre></td></tr><tr><td class="docs">
@@ -3255,8 +3284,7 @@ throw spec is a string like <code>"1d5+3"</code> or <code>"1d5-3"</code> or <cod
   (apply fx/tile-pane :#board { :pref-columns 10 }
                 (hero 0) 
                 (map floor (drop 1 (range 100)))))</pre></td></tr><tr><td class="docs"><p>(fx/sandbox #'create-view)</p>
-</td><td class="codes"></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr></table><div class="footer">Generated by <a href="https://github.com/gdeer81/marginalia">Marginalia</a>.&nbsp;&nbsp;Syntax highlighting provided by Alex Gorbatchev's <a href="http://alexgorbatchev.com/SyntaxHighlighter/">SyntaxHighlighter</a><div id="floating-toc"><ul><li class="floating-toc-li" id="floating-toc_crawl.combat">crawl.combat</li><li class="floating-toc-li" id="floating-toc_crawl.context">crawl.context</li><li class="floating-toc-li" id="floating-toc_crawl.core">crawl.core</li><li class="floating-toc-li" id="floating-toc_crawl.dice">crawl.dice</li><li class="floating-toc-li" id="floating-toc_crawl.engine">crawl.engine</li><li class="floating-toc-li" id="floating-toc_crawl.monster">crawl.monster</li><li class="floating-toc-li" id="floating-toc_crawl.state">crawl.state</li><li class="floating-toc-li" id="floating-toc_crawl.ui.javafx">crawl.ui.javafx</li></ul></div></div><script type="text/javascript">SyntaxHighlighter.defaults['gutter'] = false;
->>>>>>> 40420fe04b625d8b04ea807a221eca6eee2abef9
+</td><td class="codes"></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr></table><div class="footer">Generated by <a href="https://github.com/gdeer81/marginalia">Marginalia</a>.&nbsp;&nbsp;Syntax highlighting provided by Alex Gorbatchev's <a href="http://alexgorbatchev.com/SyntaxHighlighter/">SyntaxHighlighter</a><div id="floating-toc"><ul><li class="floating-toc-li" id="floating-toc_crawl.client">crawl.client</li><li class="floating-toc-li" id="floating-toc_crawl.client.command">crawl.client.command</li><li class="floating-toc-li" id="floating-toc_crawl.client.data">crawl.client.data</li><li class="floating-toc-li" id="floating-toc_crawl.combat">crawl.combat</li><li class="floating-toc-li" id="floating-toc_crawl.context">crawl.context</li><li class="floating-toc-li" id="floating-toc_crawl.core">crawl.core</li><li class="floating-toc-li" id="floating-toc_crawl.dice">crawl.dice</li><li class="floating-toc-li" id="floating-toc_crawl.engine">crawl.engine</li><li class="floating-toc-li" id="floating-toc_crawl.monster">crawl.monster</li><li class="floating-toc-li" id="floating-toc_crawl.state">crawl.state</li><li class="floating-toc-li" id="floating-toc_crawl.ui.javafx">crawl.ui.javafx</li></ul></div></div><script type="text/javascript">SyntaxHighlighter.defaults['gutter'] = false;
 SyntaxHighlighter.all();
 
 // hackity hack
