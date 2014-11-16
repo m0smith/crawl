@@ -62,7 +62,7 @@
   [{:keys [pid type ac max-hp attack-dice damage-dice loot image] :as prototype}]
    (let [hp (throw-dice max-hp)
          monster-id (keyword (gensym (str type "-")))
-         client (if (= pid :adventurer) (simple-ai-client monster-id pid) (simple-ai-client monster-id pid))]
+         client (if (= pid :adventurer) (javafx-ui monster-id pid) (simple-ai-client monster-id pid))]
      (->Monster monster-id
                 pid
                 type

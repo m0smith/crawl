@@ -52,12 +52,12 @@
   [monster-id pid]
   (fx/sandbox #'create-view)
   (let [{:keys [data-channel command-channel] :as rtnval} (client/create-client)]
-    (async/go
-      (loop [data (async/<! data-channel)]
+    (async/go-loop []
+      (let [data (async/<! data-channel)]
         (when data
-          (inspect :javafx/data {:msg "data recived"})
+          (inspect :javafx-ui/data {:msg "data recived" :data data})
           (process-data data)
-          (recur (async/<!  data-channel)))))
+          (recur))))
     rtnval))
   
 
