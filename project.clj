@@ -26,7 +26,7 @@ A dungeon crawler
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [fx-clj "0.1.0"]
                  [org.clojure/algo.monads "0.1.5"]
-                 [com.matthiasnehlsen/inspect "0.1.1"]
+                 [com.matthiasnehlsen/inspect "0.1.2"]
                  [org.clojure/core.async "0.1.346.0-17112a-alpha"]]
   
   :profiles { :dev 

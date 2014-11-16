@@ -5,6 +5,7 @@
             [crawl.client :as client]
             [crawl.client.data :refer :all]
             [crawl.client.command :refer :all]
+            [com.matthiasnehlsen.inspect :as inspect :refer [inspect]]
             [crawl.client.protocol :refer :all])
   (:import [crawl.client.data StartTurn]))
 
@@ -52,10 +53,11 @@
   (fx/sandbox #'create-view)
   (let [{:keys [data-channel command-channel] :as rtnval} (client/create-client)]
     (async/go
-      (loop [data (async/<!! data-channel)]
+      (loop [data (async/<! data-channel)]
         (when data
+          (inspect :javafx/data {:msg "data recived"})
           (process-data data)
-          (recur (async/<!!  data-channel)))))
+          (recur (async/<!  data-channel)))))
     rtnval))
   
 

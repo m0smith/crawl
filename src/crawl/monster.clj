@@ -9,6 +9,7 @@
             [crawl.client.command :refer :all]
             [crawl.client.protocol :refer :all]
             [crawl.ui.javafx :refer [javafx-ui]]
+            [com.matthiasnehlsen.inspect :as inspect :refer [inspect]]
             )
   (:import [crawl.client.data StartTurn]))
 
@@ -27,6 +28,7 @@
           ;_ (println "process-data: " pid command-channel monster)
           delta (if (= :adventurer pid) [1 0] [-1 0]) ]
       (async/go
+        (async/<! (async/timeout 250))
         (async/>! command-channel (->Move monster-id delta))))))
     
 
@@ -34,11 +36,12 @@
   "Return a Client record."
   [monster-id pid]
   (let [{:keys [data-channel command-channel] :as rtnval} (client/create-client)]
-    (async/go
-      (loop [data (async/<!! data-channel)]
+    (async/go-loop []
+      (let [data (async/<! data-channel)]
         (when data
+          (inspect :simple-ai-client/data data)
           (process-data data)
-          (recur (async/<!!  data-channel)))))
+          (recur))))
     rtnval))
   
 
@@ -59,7 +62,7 @@
   [{:keys [pid type ac max-hp attack-dice damage-dice loot image] :as prototype}]
    (let [hp (throw-dice max-hp)
          monster-id (keyword (gensym (str type "-")))
-         client (if (= pid :adventurer) (javafx-ui monster-id pid) (simple-ai-client monster-id pid))]
+         client (if (= pid :adventurer) (simple-ai-client monster-id pid) (simple-ai-client monster-id pid))]
      (->Monster monster-id
                 pid
                 type

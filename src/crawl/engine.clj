@@ -1,5 +1,6 @@
 (ns crawl.engine
   (:require [clojure.core.async :as async ]
+            [com.matthiasnehlsen.inspect :as inspect :refer [inspect]]
             [crawl.state :refer :all]
             [crawl.client.data :refer :all]
             [crawl.combat :refer :all]
@@ -76,15 +77,29 @@
   (let [h 1
         adv (adventurer state)
         [at de] (combatants-as-monsters state)
-        {:keys [data-channel command-channel]} (:client at)]
-    ;;(println "data: :start-turn" data-channel)
-    (async/>!! data-channel (->StartTurn state (:id at)))
-    (async/<!! command-channel)
+        {:keys [data-channel command-channel]} (:client at)
+        msg (->StartTurn state (:id at))]
+    
+    (inspect :engine/combat msg)
+    (async/>!! data-channel msg)
+    (inspect :engine/combat {:msg "Waiting for response"})
+    (inspect :engine/combat (async/<!! command-channel))
     (combat* state at de adv)))
-        
 
-      
-      
+(defn close-channels [{:keys [data-channel command-channel]}]
+  (when data-channel  (async/close! data-channel))
+  (when command-channel  (async/close! command-channel)))
+
+(defn cleanup
+  ""
+  [state]
+  (let [
+        adv (adventurer state)
+        [at de] (combatants-as-monsters state)]
+    (close-channels (:client adv))
+    (close-channels (:client at))
+    (close-channels (:client de)))
+  state)
 
 (defn take-turn [state]
   (let [mode (current-mode state)]
@@ -100,7 +115,9 @@
   (let [running (running? state)]
     (condp = running
       nil state
-      :final (running->post-final state)
+      :final (-> state
+               running->post-final 
+               cleanup)
       (-> state
           pre->
           take-turn
