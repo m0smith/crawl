@@ -1,5 +1,8 @@
 (ns crawl.state)
 
+
+
+
 ;; ## State
 ;; functions ending with -> return a new state
 
@@ -13,6 +16,11 @@
   (let [transient (create-transient)]
     (->GameState context true :move nil { (:id adventurer) adventurer } (:id adventurer) transient 0)))
 
+
+;;### Utility functions
+
+(defn apply-delta [[lx ly] [dx dy]]
+  [(+ lx dx) (+ ly dy)])
 
 ;;### context
 
@@ -45,6 +53,9 @@
 
 (defn zoo-append-> [{:keys [zoo] :as state} {:keys [id] :as monster} ]
   (assoc-in state [:zoo id] monster))
+
+(defn monster-move-> [state id delta]
+  (update-in state [:zoo id :location] apply-delta delta))
 
 (defn monster-for [{:keys [zoo]} id]
   (zoo id))

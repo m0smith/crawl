@@ -13,9 +13,6 @@
     (message-add-> state "the " (:type monster) " surpises you"))) 
 
 
-(defn apply-delta [[lx ly] [dx dy]]
-  [(+ lx dx) (+ ly dy)])
-
 (defn enter-combat-mode [state]
   (let [ids (catalog-ids state)
         pid (rand-nth ids)
@@ -36,8 +33,10 @@
   "Does not validate the mode"
   [state]
   (if (roll-for-monster)
-      (enter-combat-mode state)
-      (message-add-> state  "nothing to see here")))
+    (enter-combat-mode state)
+    (-> state
+     (monster-move-> (adventurer state) [1 0])
+     (message-add-> "nothing to see here"))))
 
 
 
