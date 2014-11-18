@@ -13,11 +13,15 @@
     (message-add-> state "the " (:type monster) " surpises you"))) 
 
 
+(defn apply-delta [[lx ly] [dx dy]]
+  [(+ lx dx) (+ ly dy)])
+
 (defn enter-combat-mode [state]
   (let [ids (catalog-ids state)
         pid (rand-nth ids)
-        monster (create-monster (prototype state pid))
         adventurer (adventurer state)
+        new-location (apply-delta (location (monster-for state adventurer)) [1 0])
+        monster (create-monster (prototype state pid) new-location)
         init (roll-initiative)
         new-state (-> state 
                       (zoo-append-> monster)
@@ -60,8 +64,18 @@
         (zoo-append-> de)
         combatants-next->))
 
+(defn monster-data-send
+  ([msg monster]
+     (async/>!! (data-channel monster) msg))
+  ([msg monster m2]
+     (inspect :monster-data-send/monster1-channel (data-channel monster))
+     (inspect :monster-data-send/monster2-channel (data-channel m2))
+     (async/>!! (data-channel monster) msg)
+     (async/>!! (data-channel m2) msg)))
+
 
 (defn combat* [state at de adv]
+  (monster-data-send (->Attacking state at de) at de)
   (let [[stat new-at new-de diff msg] (attack at de)
         state (message-add-> state (str "   " msg))]
     (if (< (:hp new-de) 0)

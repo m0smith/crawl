@@ -11,7 +11,7 @@
   "Create the initial game state."
   []
   (let [{:keys [catalog] :as context} (->AppContext (prototype-catalog))
-        adventurer (create-monster (:adventurer catalog))
+        adventurer (create-monster (:adventurer catalog) [0 0])
         state (default-start-state context adventurer)]
     (doseq [s (take-while running? (iterate iteration  state )) ]
       (doseq [msg (messages s)]

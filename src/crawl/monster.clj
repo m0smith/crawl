@@ -11,13 +11,13 @@
             [crawl.ui.javafx :refer [javafx-ui]]
             [com.matthiasnehlsen.inspect :as inspect :refer [inspect]]
             )
-  (:import [crawl.client.data StartTurn]))
+  (:import [crawl.client.data Attacking StartTurn]))
 
 
 
 (defrecord MonsterPrototype [pid type ac max-hp attack-dice damage-dice loot image])
 
-(defrecord Monster [id pid type ac max-hp hp attack-dice damage-dice loot image client])
+(defrecord Monster [id pid type ac max-hp hp attack-dice damage-dice loot image client location])
 
 
 (extend-protocol DataChannel
@@ -29,7 +29,11 @@
           delta (if (= :adventurer pid) [1 0] [-1 0]) ]
       (async/go
         (async/<! (async/timeout 250))
-        (async/>! command-channel (->Move monster-id delta))))))
+        (async/>! command-channel (->Move monster-id delta)))))
+  Attacking
+  (process-data [{:keys [state at-monster de-monster] :as data}]
+    (inspect :monster/Attacking data)
+    ))
     
 
 (defn simple-ai-client 
@@ -39,7 +43,7 @@
     (async/go-loop []
       (let [data (async/<! data-channel)]
         (when data
-          (inspect :simple-ai-client/data data)
+          (inspect :simple-ai-client/data {:data data :class (class data)})
           (process-data data)
           (recur))))
     rtnval))
@@ -57,9 +61,16 @@
     (zipmap (map :pid vals) vals)))
 
 
+(defn location [monster]
+  (inspect :monster/location monster)
+  (:location monster))
+
+(defn data-channel [monster]
+  (-> monster :client :data-channel))
+
 (defn create-monster 
   "Create an instance of a monster from a given MonstorPrototype"
-  [{:keys [pid type ac max-hp attack-dice damage-dice loot image] :as prototype}]
+  [{:keys [pid type ac max-hp attack-dice damage-dice loot image] :as prototype} location]
    (let [hp (throw-dice max-hp)
          monster-id (keyword (gensym (str type "-")))
          client (if (= pid :adventurer) (javafx-ui monster-id pid) (simple-ai-client monster-id pid))]
@@ -73,7 +84,8 @@
                 damage-dice
                 (throw-dice loot)
                 image
-                client)))
+                client
+                location)))
 
               
               
