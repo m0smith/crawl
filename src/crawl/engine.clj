@@ -29,14 +29,24 @@
     new-state))
 
 
+(defn loc-n-data [state id]
+  (let [{:keys [location client] :as monster} (monster-for state id)]
+    [ location (:data-channel client)]))
+
 (defn move 
   "Does not validate the mode"
   [state]
   (if (roll-for-monster)
     (enter-combat-mode state)
-    (-> state
-     (monster-move-> (adventurer state) [1 0])
-     (message-add-> "nothing to see here"))))
+    (let [adv-id (adventurer state)
+          [location data-channel] (loc-n-data state adv-id)
+          rtnval (-> state
+                     (monster-move-> adv-id [1 0])
+                     (message-add-> "nothing to see here"))
+          new-loc (first (loc-n-data rtnval adv-id))]
+      (async/>!! data-channel (->Moved state adv-id location new-loc))
+      rtnval)))
+      
 
 
 

@@ -8,7 +8,7 @@
             [com.matthiasnehlsen.inspect :as inspect :refer [inspect]]
             ;[crawl.client.protocol :refer :all]
             )
-  (:import [crawl.client.data Attacking StartTurn]))
+  (:import [crawl.client.data Attacking StartTurn Moved]))
 
 
 (defprotocol JavaFxDataChannel
@@ -19,7 +19,9 @@
 
 
 (defn to-id [id]
-  (keyword (str "#floor-" id)))
+  (if (vector? id)
+    (keyword (str "#floor-" (first id)))
+    (keyword (str "#floor-" id))))
 
 (defn floor [id]
   (fx/image-view (to-id id)
@@ -60,13 +62,20 @@
       (async/go
         (async/>! command-channel (->Move monster-id delta)))))
 
-  Attacking
+  Object
   (process-data [{:keys [state at-monster de-monster] :as data}]
-    (inspect :javafx/Attacking data)
-    (async/go
-      (fx/run<!
-       (fx/pset! (floor-tiles-map (to-id (-> at-monster :location first)))
-                 (javafx.scene.image.Image. (-> at-monster :image)))))))
+    (inspect :javafx/Object data))
+  Moved
+  (process-data [{:keys [state monster-id old-location new-location] :as data}]
+    (inspect :javafx/Moved  data)
+    ;(println :javafx/Moved  data)
+    (let [monster (monster-for state monster-id)]
+      (async/go
+        (fx/run<!
+         (fx/pset! (floor-tiles-map (to-id old-location))
+                   (javafx.scene.image.Image. "images/Background/Textures/FlagsMid.jpg"))
+         (fx/pset! (floor-tiles-map (to-id new-location))
+                   (javafx.scene.image.Image. (:image monster))))))))
   
 (defn javafx-ui 
   "Return a Client record."

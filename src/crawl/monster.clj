@@ -30,7 +30,7 @@
       (async/go
         (async/<! (async/timeout 250))
         (async/>! command-channel (->Move monster-id delta)))))
-  Attacking
+  Object
   (process-data [{:keys [state at-monster de-monster] :as data}]
     (inspect :monster/Attacking data)
     ))
