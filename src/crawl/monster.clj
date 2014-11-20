@@ -11,7 +11,7 @@
             [crawl.ui.javafx :refer [javafx-ui]]
             [com.matthiasnehlsen.inspect :as inspect :refer [inspect]]
             )
-  (:import [crawl.client.data Attacking StartTurn]))
+  (:import [crawl.client.data Attacking StartTurn CreatedMonster]))
 
 
 
@@ -73,19 +73,20 @@
   [{:keys [pid type ac max-hp attack-dice damage-dice loot image] :as prototype} location]
    (let [hp (throw-dice max-hp)
          monster-id (keyword (gensym (str type "-")))
-         client (if (= pid :adventurer) (javafx-ui monster-id pid) (simple-ai-client monster-id pid))]
-     (->Monster monster-id
-                pid
-                type
-                (throw-dice ac)
-                hp
-                hp
-                attack-dice
-                damage-dice
-                (throw-dice loot)
-                image
-                client
-                location)))
+         client (if (= pid :adventurer) (javafx-ui monster-id pid) (simple-ai-client monster-id pid))
+         rtnval (->Monster monster-id
+                           pid
+                           type
+                           (throw-dice ac)
+                           hp
+                           hp
+                           attack-dice
+                           damage-dice
+                           (throw-dice loot)
+                           image
+                           client
+                           location)]
+     rtnval))
 
               
               
