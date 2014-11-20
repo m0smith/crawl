@@ -20,6 +20,6 @@
 (defn -main []
   (inspect/start)
   (play-game)
-  (inspect/stop)
-  ( javafx.application.Platform/exit)
+;  (inspect/stop)
+;  ( javafx.application.Platform/exit)
   )

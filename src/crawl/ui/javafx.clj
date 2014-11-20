@@ -76,13 +76,21 @@
                    (javafx.scene.image.Image. "images/Background/Textures/FlagsMid.jpg"))
          (fx/pset! (floor-tiles-map (to-id new-location))
                    (javafx.scene.image.Image. (:image monster))))))))
+
+(defn set-the-stage []
+  (let [stage (fx/sandbox #'create-view)]
+    (javafx.application.Platform/setImplicitExit true)
+    (fx/pset! stage {:on-close-request 
+                     (fn [_] (do (inspect/stop)))})
+    stage))
   
 (defn javafx-ui 
   "Return a Client record."
   [monster-id pid]
   (inspect :javafx/floor-tiles-map floor-tiles-map)
-  (fx/sandbox #'create-view)
-  (let [{:keys [data-channel command-channel] :as rtnval} (client/create-client)]
+  
+  (let [stage (set-the-stage)
+        {:keys [data-channel command-channel] :as rtnval} (client/create-client)]
     (async/go-loop []
       (let [data (async/<! data-channel)]
         (when data
