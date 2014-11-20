@@ -7,6 +7,22 @@
             [crawl.dice :refer :all]
             [crawl.monster :refer :all]))
 
+
+
+(defn monster-data-send
+  ([msg monster]
+     (inspect :monster-data-send/msg {:class (class msg) :msg msg :m1 monster})
+     (async/>!! (data-channel monster) msg))
+  ([msg monster m2]
+     (inspect :monster-data-send/msg {:class (class msg) :msg msg :m1 monster :m2 m2})
+
+
+     (async/>!! (data-channel monster) msg)
+     (async/>!! (data-channel m2) msg)))
+
+
+
+
 (defn combat-mode-mesage [state init monster]
   (if (= init 0)
     (message-add-> state "you attack the " (:type monster)) 
@@ -17,7 +33,8 @@
   (let [ids (catalog-ids state)
         pid (rand-nth ids)
         adventurer (adventurer state)
-        new-location (apply-delta (location (monster-for state adventurer)) [1 0])
+        adv-monster (monster-for state adventurer)
+        new-location (apply-delta (location adv-monster) [1 0])
         monster (create-monster (prototype state pid) new-location)
         init (roll-initiative)
         new-state (-> state 
@@ -26,6 +43,9 @@
                       (combatants-next-> init)
                       (combat-mode-mesage init monster)
                       (current-mode-> :combat))]
+    (monster-data-send (->CreatedMonster new-state (:id monster) monster (:location monster))
+                       monster
+                       adv-monster)
     new-state))
 
 
@@ -72,16 +92,6 @@
         (zoo-append-> at)
         (zoo-append-> de)
         combatants-next->))
-
-(defn monster-data-send
-  ([msg monster]
-     (async/>!! (data-channel monster) msg))
-  ([msg monster m2]
-     (inspect :monster-data-send/monster1-channel (data-channel monster))
-     (inspect :monster-data-send/monster2-channel (data-channel m2))
-     (async/>!! (data-channel monster) msg)
-     (async/>!! (data-channel m2) msg)))
-
 
 (defn combat* [state at de adv]
   (monster-data-send (->Attacking state at de) at de)

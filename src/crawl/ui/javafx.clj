@@ -8,7 +8,7 @@
             [com.matthiasnehlsen.inspect :as inspect :refer [inspect]]
             ;[crawl.client.protocol :refer :all]
             )
-  (:import [crawl.client.data Attacking StartTurn Moved]))
+  (:import [crawl.client.data Attacking StartTurn Moved CreatedMonster]))
 
 
 (defprotocol JavaFxDataChannel
@@ -42,7 +42,7 @@
                  (javafx.scene.image.Image. "images/Creatures/knight_concept_by_quintuscassius-d4xbniz.jpg")))
 
 (def floor-tiles-pairs (map #(vector (to-id %1) (floor %1)) (range 100)))
-  
+
 (def floor-tiles (map second floor-tiles-pairs))
   
 (def floor-tiles-map (reduce conj {} floor-tiles-pairs))
@@ -64,7 +64,13 @@
 
   Object
   (process-data [{:keys [state at-monster de-monster] :as data}]
-    (inspect :javafx/Object data))
+    (inspect :javafx/Object {:class (class data) :data data}))
+  CreatedMonster
+  (process-data [{:keys [state monster-id monster location] :as data}]
+    (inspect :javafx/CreatedMonster {:class (class data) :data data})
+    (fx/run!
+     (fx/pset! (floor-tiles-map (to-id location))
+               (javafx.scene.image.Image. (:image monster)))))
   Moved
   (process-data [{:keys [state monster-id old-location new-location] :as data}]
     (inspect :javafx/Moved  data)
