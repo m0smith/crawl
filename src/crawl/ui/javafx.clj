@@ -15,7 +15,7 @@
   (process-data [data]))
 
 
-    
+(def command-channel-x (atom nil))    
 
 
 (defn to-id [id]
@@ -26,7 +26,14 @@
 (defn floor [id]
   (fx/image-view (to-id id)
                  {
-                  :on-mouse-clicked (fn [e] (println "Hello World!" id (bean e)))
+                  :on-mouse-clicked (fn [e] 
+                                      (let [[monster-id command-channel] @command-channel-x]
+                                        (when command-channel
+                                          (swap! command-channel-x (fn [_ x] x) nil)
+                                          (async/go
+                                            (async/>! command-channel (->Move monster-id [1 0]))
+                                            ))))
+                                      
                   :fit-height 32
                   :fit-width 32
                   }
@@ -56,11 +63,9 @@
   StartTurn
   (process-data [{:keys [monster-id state] :as data}]
     (let [{:keys [pid client] :as monster} (monster-for state monster-id)
-          {:keys [command-channel]} client
-          ;_ (println "process-data: " pid command-channel monster)
-          delta (if (= :adventurer pid) [1 0] [-1 0]) ]
-      (async/go
-        (async/>! command-channel (->Move monster-id delta)))))
+          {:keys [command-channel]} client]
+      (swap! command-channel-x (fn [_ x] x) [monster-id command-channel])))
+
 
   Object
   (process-data [{:keys [state at-monster de-monster] :as data}]
