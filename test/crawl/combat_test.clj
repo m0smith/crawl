@@ -36,6 +36,7 @@
 (def gen-damage-dice gen-dice-def)
 (def gen-loot gen/s-pos-int)
 (def gen-loot-dice gen-dice-def)
+(def gen-location (gen/tuple gen/nat gen/nat))
 (def gen-image (gen/elements (vector (file-seq (io/file "images/Creatures")))))
   
 
@@ -44,7 +45,7 @@
            (gen/tuple gen-pid gen-type gen-ac-dice gen-max-hp-dice gen-attack-dice gen-damage-dice gen-loot-dice gen-image)))
 
 (def gen-monster
- (gen/fmap create-monster gen-monster-prototype))
+ (gen/fmap (partial apply create-monster) (gen/tuple gen-monster-prototype gen-location)))
 
 (def gen-attack
   (gen/fmap (fn [[at de ]] [at de (attack at de)]) (gen/tuple gen-monster gen-monster)))
@@ -61,7 +62,7 @@
 (defn validate-defender [_ {:keys [hp] :as de} [stat _ new-de & rest]]
   (let [new-hp (:hp new-de)]
     (and (<= new-hp hp)
-         (if (= stat :miss)
+         (if (= stat :missx)
            (= de new-de)
            true))))
 
