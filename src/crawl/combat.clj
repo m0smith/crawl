@@ -2,6 +2,7 @@
   (:require
    [crawl.creature :refer [attack-dice damage-dice]]
    [crawl.dice :refer [roll]]
+   [crawl.event :refer [Event]]
    [crawl.object :refer [armor-class name-of]]
    ))
 
@@ -18,9 +19,9 @@
       (str " for " damage " hit points of damage"))))
 
 (defrecord AttackOutcome [result armor-class attack-value damage damage-roll attack-roll attacker target]
-  Object
-  (toString [s] (str "The " (name-of attacker) " " (result-description result) " the " (name-of target)
-                     (damage-description damage) ".")))
+  Event
+  (short-description [s] (str "The " (name-of attacker) " " (result-description result) " the " (name-of target)
+                              (damage-description damage) ".")))
 
 (defn attack [attacker target]
   (let [ad (attack-dice attacker)

@@ -3,12 +3,28 @@
   The parts of GameState
   zoo - a map of uuid to Creature
   status - one of:
+  * :created
   * :running"
   )
 
 
 
 (defrecord GameState [zoo status])
+
+(def current (atom nil))
+
+(def history (atom []))
+
+(add-watch current :history 
+           (fn [key atm old-state new-state] 
+             (swap! history conj new-state)))
+
+(reset! current (->GameState {} :created))
+
+(defn alter-state [f]
+  (swap! current f))
+
+
 
 
 ;; ## State
