@@ -1,26 +1,18 @@
 (ns crawl.monster
-  (:require [clojure.core.async :as async ]
-            [clojure.edn :as edn]
-            [clojure.java.io :as io]
-            [crawl.client :as client]
-            [crawl.dice :refer :all]
-            [crawl.state :refer :all]
-            [crawl.client.data :refer :all]
-            [crawl.client.command :refer :all]
-            [crawl.client.protocol :refer :all]
-            [crawl.ui.javafx :refer [javafx-ui]]
-            [com.matthiasnehlsen.inspect :as inspect :refer [inspect]]
-            )
-  (:import [crawl.client.data Attacking StartTurn CreatedMonster]))
+  (:require
+   [crawl.creature :refer [->CreatureType]]))
+
+(def Rat (->CreatureType "Rat" 10 [1 20 1] [1 4 0]))
+(def Snake (->CreatureType "Snake" 10 [1 20 1] [1 4 0]))
 
 
 
-(defrecord MonsterPrototype [pid type ac max-hp attack-dice damage-dice loot image])
+#_(defrecord MonsterPrototype [pid type ac max-hp attack-dice damage-dice loot image])
 
-(defrecord Monster [id pid type ac max-hp hp attack-dice damage-dice loot image client location])
+#_(defrecord Monster [id pid type ac max-hp hp attack-dice damage-dice loot image client location])
 
 
-(extend-protocol DataChannel
+#_(extend-protocol DataChannel
   StartTurn
   (process-data [{:keys [monster-id state] :as data}]
     (let [{:keys [pid client] :as monster} (monster-for state monster-id)
@@ -36,7 +28,7 @@
     ))
     
 
-(defn simple-ai-client 
+#_(defn simple-ai-client 
   "Return a Client record."
   [monster-id pid]
   (let [{:keys [data-channel command-channel] :as rtnval} (client/create-client)]
@@ -49,7 +41,7 @@
     rtnval))
   
 
-(defn prototype-catalog 
+#_(defn prototype-catalog 
   "Create and return the catalog of monster prototypes.  The catalog is a map of
 `pid -> MonsterPrototype`."
   []
@@ -61,14 +53,14 @@
     (zipmap (map :pid vals) vals)))
 
 
-(defn location [monster]
+#_(defn location [monster]
   (inspect :monster/location monster)
   (:location monster))
 
-(defn data-channel [monster]
+#_(defn data-channel [monster]
   (-> monster :client :data-channel))
 
-(defn create-monster 
+#_(defn create-monster 
   "Create an instance of a monster from a given MonstorPrototype"
   [{:keys [pid type ac max-hp attack-dice damage-dice loot image] :as prototype} location]
    (let [hp (throw-dice max-hp)

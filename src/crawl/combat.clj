@@ -1,16 +1,41 @@
 (ns crawl.combat
-  (:require [crawl.dice :refer :all]))
+  (:require
+   [crawl.creature :refer [attack-dice damage-dice]]
+   [crawl.dice :refer [roll]]
+   [crawl.object :refer [armor-class name-of]]
+   ))
 
 
-(defn attack [{:keys [attack-dice damage-dice ] :as attacker} 
-              {:keys [ac hp] :as defender}]
-  (let [a-type (:type attacker)
-        d-type (:type defender)]
-    (if (>= (throw-dice attack-dice) ac)
-      (let [damage (roll-damage damage-dice)
-            new-hp (- hp damage)
-            diff { :hp new-hp }]
-        [:hit attacker (merge defender diff) diff (str a-type " hits " d-type " for " damage) ])
-      [:miss attacker defender {} (str a-type " misses " d-type) ])))
+(defn result-description [result]
+  (if (= :miss result)
+    "misses"
+    "hits"))
+
+(defn damage-description [damage]
+  (when damage
+    (condp = damage
+      1 " for 1 hit point of damage"
+      (str " for " damage " hit points of damage"))))
+
+(defrecord AttackOutcome [result armor-class attack-value damage damage-roll attack-roll attacker target]
+  Object
+  (toString [s] (str "The " (name-of attacker) " " (result-description result) " the " (name-of target)
+                     (damage-description damage) ".")))
+
+(defn attack [attacker target]
+  (let [ad (attack-dice attacker)
+        dd (damage-dice attacker)
+        ac (armor-class target)
+        {:keys [rolled damage]} (roll :rolled ad :damage dd)
+        attack-val (:total rolled)]
+    (if (<= ac attack-val)
+      (->AttackOutcome :hit ac attack-val (:total damage) damage rolled attacker target)
+      (->AttackOutcome :miss ac attack-val nil nil rolled attacker target))))
+
+
+
+
+
+
 
       

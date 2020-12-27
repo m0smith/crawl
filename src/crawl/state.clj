@@ -1,125 +1,133 @@
-(ns crawl.state)
+(ns crawl.state
+  "
+  The parts of GameState
+  zoo - a map of uuid to Creature
+  status - one of:
+  * :running"
+  )
 
 
+
+(defrecord GameState [zoo status])
 
 
 ;; ## State
 ;; functions ending with -> return a new state
 
-(defrecord Transient [messages errors])
+;; (defrecord Transient [messages errors])
 
-(defn create-transient [] (Transient. [] []))
+;; (defn create-transient [] (Transient. [] []))
 
-(defrecord GameState [context running mode combatants zoo adventurer transient moves] )
+;; (defrecord GameState [context running mode combatants zoo adventurer transient moves] )
 
-(defn default-start-state [context adventurer]
-  (let [transient (create-transient)]
-    (->GameState context true :move nil { (:id adventurer) adventurer } (:id adventurer) transient 0)))
+;; (defn default-start-state [context adventurer]
+;;   (let [transient (create-transient)]
+;;     (->GameState context true :move nil { (:id adventurer) adventurer } (:id adventurer) transient 0)))
 
 
-;;### Utility functions
+;; ;;### Utility functions
 
-(defn apply-delta [[lx ly] [dx dy]]
-  [(+ lx dx) (+ ly dy)])
+;; (defn apply-delta [[lx ly] [dx dy]]
+;;   [(+ lx dx) (+ ly dy)])
 
-;;### context
+;; ;;### context
 
-(defn catalog-ids [{:keys [context adventurer zoo]}]
-  (let [adv (zoo adventurer)]
-    (remove #{(:pid adv)} (keys (:catalog context)))))
+;; (defn catalog-ids [{:keys [context adventurer zoo]}]
+;;   (let [adv (zoo adventurer)]
+;;     (remove #{(:pid adv)} (keys (:catalog context)))))
 
-(defn prototype [{:keys [context]} pid]
-  (-> context :catalog pid))
+;; (defn prototype [{:keys [context]} pid]
+;;   (-> context :catalog pid))
 
-;;### Running
+;; ;;### Running
 
-(defn running? [{:keys [running]}]
-  running)
+;; (defn running? [{:keys [running]}]
+;;   running)
   
-(defn running->final [state]
-  (merge state {:running :final}))
+;; (defn running->final [state]
+;;   (merge state {:running :final}))
 
-(defn running->post-final [state]
-  (merge state {:running nil}))
+;; (defn running->post-final [state]
+;;   (merge state {:running nil}))
 
-;; ### Mode
+;; ;; ### Mode
 
-(defn current-mode [{:keys [mode]}]
-  mode)
+;; (defn current-mode [{:keys [mode]}]
+;;   mode)
 
-(defn current-mode-> [state new-mode]
-    (assoc state :mode new-mode))
-;; ### Zoo
+;; (defn current-mode-> [state new-mode]
+;;     (assoc state :mode new-mode))
+;; ;; ### Zoo
 
-(defn zoo-append-> [{:keys [zoo] :as state} {:keys [id] :as monster} ]
-  (assoc-in state [:zoo id] monster))
+;; (defn zoo-append-> [{:keys [zoo] :as state} {:keys [id] :as monster} ]
+;;   (assoc-in state [:zoo id] monster))
 
-(defn monster-move-> [state id delta]
-  (update-in state [:zoo id :location] apply-delta delta))
+;; (defn monster-move-> [state id delta]
+;;   (update-in state [:zoo id :location] apply-delta delta))
 
-(defn monster-for [{:keys [zoo]} id]
-  (zoo id))
+;; (defn monster-for [{:keys [zoo]} id]
+;;   (zoo id))
 
-;; ### Combatants
+;; ;; ### Combatants
 
-(defn combatants-set-> [state & combs]
-  (assoc state :combatants  combs))
+;; (defn combatants-set-> [state & combs]
+;;   (assoc state :combatants  combs))
 
-(defn rotate 
-  ([coll] (rotate 1 coll))
-  ([num coll]
-    (if (< num 1)
-      coll
-      (concat (drop num coll) (take num coll)))))
+;; (defn rotate 
+;;   ([coll] (rotate 1 coll))
+;;   ([num coll]
+;;     (if (< num 1)
+;;       coll
+;;       (concat (drop num coll) (take num coll)))))
 
-(defn combatants-next-> 
-  "Make the next combatant"
-  ([{:keys [combatants] :as state}]
-     (assoc state :combatants (rotate combatants)))
+;; (defn combatants-next-> 
+;;   "Make the next combatant"
+;;   ([{:keys [combatants] :as state}]
+;;      (assoc state :combatants (rotate combatants)))
 
-  ([{:keys [combatants] :as state} num]
-     (assoc state :combatants (rotate num combatants))))
+;;   ([{:keys [combatants] :as state} num]
+;;      (assoc state :combatants (rotate num combatants))))
 
-(defn combatants [{:keys [combatants]}]
-  combatants)
+;; (defn combatants [{:keys [combatants]}]
+;;   combatants)
 
-(defn combatants-as-monsters [{:keys [combatants] :as state}]
-  (map (partial monster-for state) combatants))
+;; (defn combatants-as-monsters [{:keys [combatants] :as state}]
+;;   (map (partial monster-for state) combatants))
 
 
-;; ### Adventurer
+;; ;; ### Adventurer
 
-(defn adventurer [{:keys [adventurer]}]
-  adventurer)
+;; (defn adventurer [{:keys [adventurer]}]
+;;   adventurer)
 
-;; ### Transient
+;; ;; ### Transient
 
-(defn message-add-> [state & message]
-  (update-in state [:transient :messages] conj (apply str message)))
+;; (defn message-add-> [state & message]
+;;   (update-in state [:transient :messages] conj (apply str message)))
 
-(defn messages [{:keys [transient]}]
-  (:messages transient))
+;; (defn messages [{:keys [transient]}]
+;;   (:messages transient))
 
-(defn error-add-> [state error]
-  (update-in state [:transient :errors] conj error))
+;; (defn error-add-> [state error]
+;;   (update-in state [:transient :errors] conj error))
 
-(defn transient-clear-> [state]
-  (assoc state :transient (create-transient)))
+;; (defn transient-clear-> [state]
+;;   (assoc state :transient (create-transient)))
 
-;; ## Moves
+;; ;; ## Moves
 
-(defn moves-next-> [state]
-  (update-in state [:moves] inc))
+;; (defn moves-next-> [state]
+;;   (update-in state [:moves] inc))
 
-(defn moves [{:keys [moves]}]
-  moves)
+;; (defn moves [{:keys [moves]}]
+;;   moves)
 
-;; ## Pre and Post
+;; ;; ## Pre and Post
 
-(defn pre-> [state]
-  (-> state
-      transient-clear->
-      moves-next->))
+;; (defn pre-> [state]
+;;   (-> state
+;;       transient-clear->
+;;       moves-next->))
 
-(defn post-> [state]
-  state)
+;; (defn post-> [state]
+;;   state)
