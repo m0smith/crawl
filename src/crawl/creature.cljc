@@ -1,7 +1,6 @@
 (ns crawl.creature
   (:require
-   
-   [crawl.object :refer [Attackable Named armor-class]]
+   [crawl.object :refer [Attackable Named Identifiable armor-class id-of]]
    [crawl.util :refer [uuid]]))
 
 (defprotocol Attacker
@@ -19,9 +18,12 @@
   Attackable
   (armor-class [c] (:armor-class c)))
 
-(defrecord Creature [name creature-type hit-points]
+(defrecord Creature [id name creature-type hit-points]
   Named
   (name-of [c] (:name c))
+
+  Identifiable
+  (id-of [c] id)
   
   Attacker
   (attack-dice [c] (attack-dice creature-type))
@@ -32,4 +34,4 @@
   (armor-class [c] (armor-class creature-type)))
 
 (defn ->zoo [creatures]
-  (into {} (zipmap (repeatedly uuid) creatures)))
+  (into {} (zipmap (map id-of creatures) creatures)))

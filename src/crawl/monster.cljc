@@ -1,11 +1,54 @@
 (ns crawl.monster
   (:require
-   [crawl.creature :refer [->CreatureType]]))
+   [clojure.java.io :as io]
+   [clojure.data.json :as json]
+   
+   [crawl.creature :refer [->CreatureType ->Creature Attacker attack-dice damage-dice]]
+   [crawl.object :refer [Attackable Named armor-class name-of hit-points]]
+   [crawl.util :refer [uuid]]
+   ))
 
-(def Rat (->CreatureType "Rat" 10 [1 20 1] [1 4 0]))
-(def Snake (->CreatureType "Snake" 10 [1 20 1] [1 4 0]))
+;;(def Rat (->CreatureType "Rat" 10 [1 20 1] [1 4 0]))
+;;(def Snake (->CreatureType "Snake" 10 [1 20 1] [1 4 0]))
+
+(defn load-monster [name]
+  (let [url (str "https://www.dnd5eapi.co/api/monsters/" name "/")]
+    (delay
+      (json/read (io/reader url) :key-fn keyword))))
+
+(defn get-damage-dice [rec]
+  (-> rec
+      :actions
+      first
+      :damage
+      first
+      :damage_dice))
+
+(defn get-attack-dice [rec]
+  (let [bonus (-> rec
+                  :actions
+                  first
+                  :attack_bonus)]
+    [1 20 bonus]))
+
+(defrecord Dnd5EAPIMonster [rec]
+  Named
+  (name-of [m] (:name @rec))
+
+  Attacker
+  (attack-dice [m] (get-attack-dice @rec))
+  (damage-dice [m] (get-damage-dice @rec))
+
+  Attackable
+  (armor-class [m] (:armor_class @rec))
+  (hit-points [m] (:hit_points @rec)))
 
 
+(defn dnd5e-api-monster [name]
+  (->Dnd5EAPIMonster (load-monster name)))
+
+(def Rat (dnd5e-api-monster "rat"))
+(def Snake (dnd5e-api-monster "constrictor-snake"))
 
 #_(defrecord MonsterPrototype [pid type ac max-hp attack-dice damage-dice loot image])
 

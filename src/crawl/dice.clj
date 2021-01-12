@@ -9,12 +9,15 @@
   Object
   (toString [ds] (str dice "d" sides (if (neg? modifier) "" "+") modifier)))
 
-(defn roll-die [{:keys [dice sides modifier] :as dice-spec}]
-  (let [roll (inc (rand-int sides))
-        type (keyword (str "d" sides))]
-    (cond-> {:type type :value roll}
-      (= 1 roll) (assoc :min true)
-      (= sides roll) (assoc :max true))))
+(defn roll-dice
+  "Return a seq of dice rolls"
+  [{:keys [dice sides modifier] :as dice-spec}]
+  (for [i (range dice)]
+    (let [roll (inc (rand-int sides))
+          type (keyword (str "d" sides))]
+      (cond-> {:type type :value roll}
+        (= 1 roll) (assoc :min true)
+        (= sides roll) (assoc :max true)))))
 
 (defn parse
   "Accept strings in the format 1d12+8 and return a seq of dice def:
@@ -24,15 +27,18 @@
   Modifier can be nil, a positive integer or a
    negative integer.
 
-  If the string is not parsable, rturn an empty seq.
+  n  If the string is not parsable, rturn an empty seq.
 "
   [s]
-  (for [thrw (re-seq #"(\d+)d(\d+)([\+-]\d+)?" s)]
-    (let [[_ dice sides modifier] thrw
-          dice (if dice (Integer/parseInt dice) 0)
-          sides (if sides (Integer/parseInt sides) 0)
-          modifier (if modifier (Integer/parseInt modifier) 0)]
-      (->DiceSpec dice sides modifier))))
+  (for [thrw (re-seq #"(\d+)d(\d+)([\+-]\d+)?|\d+" s)]
+    (let [[all dice sides modifier] thrw]
+      (if dice
+        (let [dice (if dice (Integer/parseInt dice) 0)
+              sides (if sides (Integer/parseInt sides) 0)
+              modifier (if modifier (Integer/parseInt modifier) 0)]
+          (->DiceSpec dice sides modifier))
+        (when all
+          (->DiceSpec 0 0 (Integer/parseInt all)))))))
 
 (defprotocol NormalizeSpec
   (normalize [d] "Return a seq of DiceSpec"))
@@ -78,7 +84,7 @@
   ([specs]
    (let [dice-specs (normalize specs)
          modifier (apply + (map :modifier dice-specs))
-         rolls (map roll-die dice-specs)
+         rolls (apply concat (map roll-dice dice-specs))
          total (apply + modifier (map :value rolls))
          by-type (group-by :type rolls)]
      {:total total
@@ -110,7 +116,7 @@
          type (keyword (str "d" sides))]
      {:type type :value roll})))
   
-(defn roll-dice
+(defn roll-dice-old
   "Roll the number of dice and return the results as a seq.  If sides
   is not passed, default-sides is used."
   ([dice] (roll-dice dice default-sides))

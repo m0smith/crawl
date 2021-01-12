@@ -4,31 +4,62 @@
   zoo - a map of uuid to Creature
   status - one of:
   * :created
-  * :running"
-  )
+  * :running
 
-
+  Functions ending with -> return a new state"
+  (:require
+   [tick.core :as t]
+   [crawl.event :as event :refer [short-description ->Event]]
+            ))
 
 (defrecord GameState [zoo status])
 
-(def current (atom nil))
+(def current-event (atom nil))
 
 (def history (atom []))
 
-(add-watch current :history 
-           (fn [key atm old-state new-state] 
-             (swap! history conj new-state)))
+(defn register-event-handler
+  [ky eh]
+  (add-watch current-event ky eh))
 
-(reset! current (->GameState {} :created))
+(register-event-handler :history
+                        (fn [key atm old-state new-state] 
+                          (swap! history conj new-state)))
+
+(register-event-handler :stdio
+                        (fn [key atm old-state new-state] 
+                          (println (short-description new-state))))
+
+(defn publish-event
+  "Make `ev` the current event.  Does not alter the game state.
+
+  Copy game-state from the current-event.
+  Incrment sequence-number from current-event.
+  "
+  [ev]
+  (swap! current-event
+         (fn [current]
+           (let [n (inc (event/sequence-number current))
+                 gs (event/game-state current)]
+             (assoc ev :game-state gs :sequence-number n)))))
+
+(reset! current-event
+        (let [ts (t/now)]
+          (->Event ts
+           (->GameState {} :created)
+           (str "Game created at " ts)
+           0)))
 
 (defn alter-state [f]
-  (swap! current f))
+  (swap! current-event f))
+
+
 
 
 
 
 ;; ## State
-;; functions ending with -> return a new state
+;; 
 
 ;; (defrecord Transient [messages errors])
 
