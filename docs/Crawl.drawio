@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2022-04-08T17:45:25.024Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.79 Safari/537.36" etag="8k5nrFcyut4lYMNc2sZx" version="17.4.1" type="github">
+<mxfile host="app.diagrams.net" modified="2022-04-08T17:46:05.287Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.79 Safari/537.36" etag="bwP3hBPtEe1Q-7oS5LBH" version="17.4.1" type="github">
   <diagram id="mk2cn1SJCswWF56iGvcB" name="Page-1">
     <mxGraphModel dx="975" dy="749" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
@@ -17,7 +17,7 @@
             <mxPoint x="155" y="120" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="fHFY0VWgYtFENOlRi5Vw-1" value="State Change Queue" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#00188D;shape=mxgraph.azure.queue_generic" vertex="1" parent="z_DKHHR1kLaV9ZbHm4YY-1">
+        <mxCell id="fHFY0VWgYtFENOlRi5Vw-1" value="State Change Queue" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=#2D7600;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=#60a917;shape=mxgraph.azure.queue_generic;fontColor=#ffffff;" parent="z_DKHHR1kLaV9ZbHm4YY-1" vertex="1">
           <mxGeometry x="40" y="150" width="50" height="15" as="geometry" />
         </mxCell>
       </root>
