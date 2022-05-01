@@ -1,4 +1,4 @@
-(ns crawl.r20.dice
+(ns crawl.d20.dice
   (:require [crawl.random :refer :all]))
 
 (defprotocol Roller
