@@ -4,12 +4,9 @@
    [clojure.data.json :as json]
    
    [crawl.creature :refer [->CreatureType ->Creature Attacker attack-dice damage-dice]]
-   [crawl.object :refer [Attackable Named armor-class name-of hit-points]]
+   [crawl.object :refer [Identifiable Attackable Named armor-class name-of hit-points]]
    [crawl.util :refer [uuid]]
    ))
-
-;;(def Rat (->CreatureType "Rat" 10 [1 20 1] [1 4 0]))
-;;(def Snake (->CreatureType "Snake" 10 [1 20 1] [1 4 0]))
 
 (defn load-monster [name]
   (let [url (str "https://www.dnd5eapi.co/api/monsters/" name "/")]
@@ -34,6 +31,9 @@
 (defrecord Dnd5EAPIMonster [rec]
   Named
   (name-of [m] (:name @rec))
+
+  Identifiable
+  (id-of [m] (:index @rec)) 
 
   Attacker
   (attack-dice [m] (get-attack-dice @rec))
